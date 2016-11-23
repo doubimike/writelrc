@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<changelog xmlns="http://www.omnigroup.com/namespace/OmniPlan/v2">
+  <version>2.1</version>
+  <task-change-set user="mike" date="2016-11-22T01:57:13.238Z" timestamp="2016-11-22T01:57:13.238Z">
+    <change idref="t2" to="t-1" to-position="1" resolved="yes">
+      <change idref="t2" attribute="internalPrerequisitesString" type="string" to="1FS"/>
+      <change idref="t2" attribute="title" type="string" to="画原型（交互图）"/>
+    </change>
+    <change idref="t3" to="t-1" to-position="2" resolved="yes">
+      <change idref="t3" attribute="internalPrerequisitesString" type="string" to="2FS"/>
+      <change idref="t3" attribute="title" type="string" to="画视觉图"/>
+    </change>
+    <change idref="t4" to="t-1" to-position="3" resolved="yes">
+      <change idref="t4" attribute="internalPrerequisitesString" type="string" to="3FS"/>
+      <change idref="t4" attribute="title" type="string" to="前端开发"/>
+    </change>
+    <change idref="t5" to="t-1" to-position="4" resolved="yes">
+      <change idref="t5" attribute="internalPrerequisitesString" type="string" to="4FS"/>
+      <change idref="t5" attribute="title" type="string" to="后段开发"/>
+    </change>
+    <change idref="t6" to="t-1" to-position="5" resolved="yes">
+      <change idref="t6" attribute="internalPrerequisitesString" type="string" to="5FS"/>
+      <change idref="t6" attribute="title" type="string" to="上线"/>
+    </change>
+    <change idref="t1" attribute="title" type="string" from="任务 1" to="需求分析" resolved="yes"/>
+  </task-change-set>
+  <task-change-set user="mike" date="2016-11-22T06:25:49.994Z" timestamp="2016-11-22T06:25:49.994Z">
+    <change idref="t1" attribute="effort" type="real" from="28800" to="57600"/>
+    <change idref="t2" attribute="effort" type="real" from="28800" to="144000"/>
+    <change idref="t3" attribute="effort" type="real" from="28800" to="144000"/>
+    <change idref="t4" attribute="effort" type="real" from="28800" to="144000"/>
+    <change idref="t5" attribute="effort" type="real" from="28800" to="201600"/>
+    <change idref="t6" attribute="effort" type="real" from="28800" to="86400"/>
+  </task-change-set>
+  <task-change-set user="mike" date="2016-11-23T01:57:38.517Z" timestamp="2016-11-23T01:57:38.517Z">
+    <change idref="t1" attribute="isGroup" type="real" from="0" to="1"/>
+    <change idref="t1" attribute="multiResourceWorkType" type="real" from="0"/>
+    <change idref="t1" attribute="isSplittableTask" type="real" from="1"/>
+    <change idref="t1" attribute="taskType" type="real" from="0" to="2"/>
+    <change idref="t1" attribute="resourceAssignmentType" type="real" from="0"/>
+    <change idref="t1" attribute="staticCost" type="real" from="0"/>
+    <change idref="t1" attribute="effort" type="real" from="57600"/>
+    <change idref="t1" attribute="isSplitChunk" type="real" from="0"/>
+    <change idref="t1" attribute="scheduleType" type="real" from="0"/>
+    <change idref="t1" attribute="internalAssignments" type="string" from=""/>
+    <change idref="t1" attribute="isSplitTask" type="real" from="0"/>
+    <change idref="t1" attribute="internalEffortDone" type="real" from="0"/>
+    <change idref="t10" to="t1" to-position="0">
+      <change idref="t10" attribute="noEarlierThanConstraintDate" type="date" to="2016-11-23T00:00:00.000Z"/>
+      <change idref="t10" attribute="title" type="string" to="http://www.cnycgc.com/ 分析需求"/>
+    </change>
+    <change idref="t4" attribute="isGroup" type="real" from="0" to="1"/>
+    <change idref="t4" attribute="multiResourceWorkType" type="real" from="0"/>
+    <change idref="t4" attribute="isSplittableTask" type="real" from="1"/>
+    <change idref="t4" attribute="taskType" type="real" from="0" to="2"/>
+    <change idref="t4" attribute="resourceAssignmentType" type="real" from="0"/>
+    <change idref="t4" attribute="staticCost" type="real" from="0"/>
+    <change idref="t4" attribute="effort" type="real" from="144000"/>
+    <change idref="t4" attribute="isSplitChunk" type="real" from="0"/>
+    <change idref="t4" attribute="scheduleType" type="real" from="0"/>
+    <change idref="t4" attribute="internalAssignments" type="string" from=""/>
+    <change idref="t4" attribute="isSplitTask" type="real" from="0"/>
+    <change idref="t4" attribute="internalEffortDone" type="real" from="0"/>
+    <change idref="t11" to="t4" to-position="0">
+      <change idref="t11" attribute="noEarlierThanConstraintDate" type="date" to="2016-11-23T00:00:00.000Z"/>
+      <change idref="t11" attribute="title" type="string" to="http://ink.sapo.pt/ui-elements/ 了解 可能采用的技术"/>
+    </change>
+  </task-change-set>
+  <metadata-change-set user="mike" date="2016-11-22T01:54:31.536Z" timestamp="2016-11-22T01:54:31.536Z">
+    <change idref="m1" attribute="fixedDate" type="date" from="2007-01-01T20:00:00.000Z" to="2016-11-22T00:00:00.000Z" resolved="yes"/>
+  </metadata-change-set>
+</changelog>
