@@ -1,0 +1,14 @@
+extends layout
+
+block content
+    .form-container
+      if error 
+            .alert.alert-danger #{error}
+        else if success
+            .alert.alert-success #{success}  
+      form(method='POST')
+        legend 忘记密码？
+        .form-group
+          label(for='email') 邮箱
+          input.form-control(type='text', name='email', autofocus)
+        button.btn.btn-primary(type='submit') 重设密码

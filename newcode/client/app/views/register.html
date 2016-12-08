@@ -1,0 +1,80 @@
+<div layout="column" style="height: calc(100vh - 64px);" ng-cloak>
+    <div layout="row" layout-xs="column" layout-sm="column" flex layout-align="space-around center">
+        <div flex-gt-sm="40" layout="column" layout-align="center center">
+            <h2>从今天起，做一个拿起枪的文艺青年</h2>
+            <h3>写歌词</h3>
+            <p>文艺青年拿起枪，开始写自己的歌！</p>
+            <p>做一个武装了的文艺青年。</p>
+        </div>
+        <div class="register-area" flex-gt-sm="40">
+            <div layout="row" layout-align="end center">
+                <span>已经有帐号了?</span>
+                <md-button class="md-raised" ui-sref="login">登录</md-button>
+            </div>
+            <div layout="column" layout-padding>
+                <div layout-padding>
+                    <form name="userForm" novalidate>
+                        <div layout-gt-sm="row">
+                            <md-input-container class="md-block" flex-gt-sm>
+                                <label>昵称</label>
+                                <input md-maxlength="30" required name="nickname" ng-model="vm.user.nickname" />
+                                <div ng-messages="userForm.nickname.$error">
+                                    <div ng-message="required">必填</div>
+                                    <div ng-message="md-maxlength">起这么长的笔名是要做甚！</div>
+                                </div>
+                            </md-input-container>
+                        </div>
+                        <div layout-gt-sm="row">
+                            <md-input-container class="md-block" flex-gt-sm>
+                                <label>邮箱</label>
+                                <input name="email" ng-model="vm.user.email" required maxlength="100" ng-pattern="/^.+@.+\..+$/" />
+                                <div ng-messages="userForm.email.$error">
+                                    <div ng-message-exp="['required', 'maxlength', 'pattern']">
+                                        请填写有效的邮箱地址。
+                                    </div>
+                                </div>
+                            </md-input-container>
+                        </div>
+                        <div layout-gt-sm="row">
+                            <md-input-container class="md-block" flex-gt-sm>
+                                <label>密码(不少于6位)</label>
+                                <input name="password" type="password" ng-model="vm.user.password" required minlength="6" />
+                                <div ng-messages="userForm.password.$error">
+                                    <div ng-message-exp="['required', 'minlength']">
+                                        不少于6位。
+                                    </div>
+                                </div>
+                            </md-input-container>
+                        </div>
+                        <div layout="row">
+                            <md-button class="md-warn md-raised md-hue-2" flex type="submit" ng-click="vm.reg()">注册</md-button>
+                        </div>
+                        <div layout="row" layout-align="center">
+                            <p>点击 “注册” 或下方社交登录按钮，即表示您同意并愿意遵守写歌词 <a href="#">用户协议</a> 和 <a href="#">隐私政策</a> 。</p>
+                        </div>
+                        <div>
+                            <hr>
+                        </div>
+                        <div layout="column" layout-align="center center">
+                            <p>您还可以通过以下方式直接登录</p>
+                            <div layout="row" layout-align="center">
+                                <md-button class="md-fab md-primary" aria-label="微信登录">
+                                    <md-icon md-font-icon="android"></md-icon>
+                                </md-button>
+                                <md-button class="md-fab" aria-label="微博登录">
+                                    <md-icon md-svg-src="img/icons/ic_comment_24px.svg"></md-icon>
+                                </md-button>
+                                <md-button class="md-fab md-primary md-hue-2" aria-label="豆瓣登录">
+                                    <md-icon md-font-icon="fa-magic" class="fa" alt="magic wand">fa-magic</md-icon>
+                                </md-button>
+                                <md-button class="md-fab" aria-label="QQ登录">
+                                    <md-icon> face </md-icon>
+                                </md-button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

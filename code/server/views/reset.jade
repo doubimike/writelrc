@@ -1,0 +1,14 @@
+extends layout
+
+block content
+  .form-container
+    form(method='POST')
+      legend 重置密码
+      .form-group
+        label(for='password') 新密码
+        input.form-control(type='password', name='password', value='', placeholder='New password', autofocus=true)
+      .form-group
+        label(for='confirm') 确认密码
+        input.form-control(type='password', name='confirm', value='', placeholder='Confirm password')
+      .form-group
+        button.btn.btn-primary(type='submit') 更新

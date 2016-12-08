@@ -1,0 +1,73 @@
+.md-toolbar-tools {}
+
+body {
+    font-family: PingFangSC-Regular, sans-serif;
+    font-size: 14px;
+}
+
+.minus-toolbar {
+    height: calc(100vh - 64px);
+}
+
+.tac {
+    text-align: center;
+}
+
+.f30 {
+    font-size: 30px;
+}
+
+.f42 {
+    font-size: 42px;
+}
+
+.lh64 {
+    line-height: 64px;
+}
+
+.mb50 {
+    margin-bottom: 50px;
+}
+
+.parent {
+    position: relative;
+}
+
+.child {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%) translateX(-50%);
+    left: 50%;
+}
+
+.intro {
+    width: 580px;
+    text-align: center;
+}
+
+.intro p {
+    font-size: 18px;
+}
+
+.logo {
+    height: 60px;
+    line-height: 64px;
+}
+
+main {
+    height: calc(100vh - 64px);
+}
+
+md-content.md-default-theme {
+    background-color: #eee;
+}
+
+.lrc-card {
+    min-height: 300px;
+}
+
+.register-area,
+.login-area {
+    background-color: #ccc;
+    border-radius: 10px;
+}

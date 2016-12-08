@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>写歌词</title>
+    <link href="//cdn.bootcss.com/material-design-icons/3.0.1/iconfont/material-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="//cdn.bootcss.com/material-design-lite/1.2.1/material.min.css">
+    <style>
+    body,
+    .mdl-button {
+        font-family: PingFangSC-Regular, sans-serif;
+        font-size: 14px;
+    }
+    
+    .f30 {
+        font-size: 30px;
+    }
+    
+    .f42 {
+        font-size: 42px;
+    }
+    
+    .lh64 {
+        line-height: 64px;
+    }
+    
+    .mb50 {
+        margin-bottom: 50px;
+    }
+    
+    .mdl-button {
+        color: #fff;
+    }
+    
+    main {
+        background-color: #008AC3;
+    }
+    
+    .ac {
+        width: fit-content;
+        margin: 0 auto;
+    }
+    
+    .parent {
+        position: relative;
+    }
+    
+    .child {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%) translateX(-50%);
+        left: 50%;
+    }
+    
+    .intro {
+        width: 580px;
+        text-align: center;
+        color: #fff;
+    }
+    
+    .intro p {
+        font-size: 18px;
+    }
+    
+    .mdl-layout__drawer {
+        background-color: #ccc;
+    }
+    
+    .logo {
+        height: 60px;
+        line-height: 64px;
+    }
+    </style>
+    <script defer src="//cdn.bootcss.com/material-design-lite/1.2.1/material.min.js"></script>
+</head>
+
+<body>
+    <!-- Always shows a header, even in smaller screens. -->
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+        <header class="mdl-layout__header">
+            <div class="mdl-layout__header-row">
+                <!-- Title -->
+                <span class="mdl-layout-title"><img class="logo" src="http://obnbtn4jw.bkt.clouddn.com/Logo.png" alt="写歌词"></span>
+                <!-- Add spacer, to align navigation to the right -->
+                <div class="mdl-layout-spacer"></div>
+                <!-- Navigation. We hide it in small screens. -->
+                <nav class="mdl-navigation mdl-layout--large-screen-only">
+                    <a class="mdl-button mdl-js-button mdl-js-ripple-effect" href="#">
+                            发现打动你的歌词
+                    </a>
+                    <a class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" href="#">
+                        写下你的第一首歌
+                    </a>
+                    <a class="mdl-button mdl-js-button mdl-js-ripple-effect" href="#">我要征歌</a>
+                    <a class="mdl-button mdl-js-button mdl-js-ripple-effect" href="#">登录</a>
+                    <span class="lh64">or</span>
+                    <a class="mdl-button mdl-js-button mdl-js-ripple-effect" href="#">注册</a>
+                </nav>
+            </div>
+        </header>
+        <div class="mdl-layout__drawer mdl-layout--small-screen-only">
+            <!-- <span class="mdl-layout-title">Title</span> -->
+            <nav class="mdl-navigation">
+                <a class="mdl-button mdl-js-button mdl-js-ripple-effect" href="#">
+                            发现打动你的歌词
+                    </a>
+                <a class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" href="#">
+                        写下你的第一首歌
+                    </a>
+                <a class="mdl-button mdl-js-button mdl-js-ripple-effect" href="#">我要征歌</a>
+                <a class="mdl-button mdl-js-button mdl-js-ripple-effect" href="#">登录</a>
+                <a class="mdl-button mdl-js-button mdl-js-ripple-effect" href="#">注册</a>
+            </nav>
+        </div>
+        <main class="mdl-layout__content parent">
+            <div class="page-content">
+                <!-- Your content goes here -->
+                <div class="ac child intro">
+                    <div class="mb50"><span class="f30">开始，</span><span class="f42">写下自己的歌！</span></div>
+                    <div>
+                        <p>内心的深处，我不满足于做一个仅仅是听歌的文艺青年！</p>
+                        <p>真正的文艺青年，需要有自己的枪！</p>
+                        <p>也许现在的我不会乐器，不会作曲，更不会谱曲，但至少我能够写下自己的歌词，那也是来自内心的感受，也能温暖自己，温暖看到的人！</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,23 @@
+extends layout.jade
+
+block title
+    title 登录    
+block content
+    .form-container
+        h2 登录
+        if error 
+            .alert.alert-danger #{error}
+        else if success
+            .alert.alert-success #{success}
+        form(action="/login",method="POST")
+            .form-group
+                label 用户名   
+                input(type="text",name="username",required).form-control
+            .form-group    
+                label 密码
+                input(type="password",name="password",required).form-control
+            .form-group
+                button.btn.btn-primary 登录
+                a(href="/register").btn.btn-link 注册
+                a(href="/forgot").btn.btn-link 忘记密码？
+        

@@ -1,0 +1,23 @@
+<form name="lrcForm" layout="column" novalidate>
+    <md-input-container>
+        <label>词名</label>
+        <input name="lrcName" ng-model="lrcName" required>
+        <div ng-messages="lrcForm.lrcName.$error" ng-show="lrcForm.lrcName.$dirty">
+            <div ng-message="required">必填</div>
+        </div>
+    </md-input-container>
+    <md-input-container>
+        <label>发挥你的想象吧~</label>
+        <textarea name="content" ng-model="content" required rows="5"></textarea>
+        <div ng-messages="lrcForm.content.$error" ng-show="lrcForm.content.$dirty">
+            <div ng-message="required">必填</div>
+        </div>
+    </md-input-container>
+    <md-input-container>
+        <label>创作背景</label>
+        <textarea name="bg" ng-model="bg" rows="2"></textarea>
+    </md-input-container>
+    <div layout="row">
+        <md-button class="md-warn md-raised md-hue-2" type="submit">提交</md-button>
+    </div>
+</form>

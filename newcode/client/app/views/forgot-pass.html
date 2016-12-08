@@ -1,0 +1,13 @@
+<h3>请输入您注册的邮箱号码，我们会以邮件形式将重置密码的链接发送给您。</h3>
+<form name="fpForm" novalidate>
+    <md-input-container class="md-block" flex-gt-sm>
+        <label>邮箱</label>
+        <input name="email" ng-model="user.email" required maxlength="100" ng-pattern="/^.+@.+\..+$/" />
+        <div ng-messages="fpForm.email.$error">
+            <div ng-message-exp="['required', 'maxlength', 'pattern']">
+                请填写有效的邮箱地址。
+            </div>
+        </div>
+    </md-input-container>
+    <md-button class="md-raised" type="submit">发送</md-button>
+</form>
