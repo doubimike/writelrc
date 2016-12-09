@@ -10,7 +10,7 @@
             <div layout-gt-sm="row">
                 <md-input-container class="md-block" flex-gt-sm>
                     <label>邮箱</label>
-                    <input name="email" ng-model="user.email" required maxlength="100" ng-pattern="/^.+@.+\..+$/" />
+                    <input name="email" ng-model="vm.user.email" required maxlength="100" ng-pattern="/^.+@.+\..+$/" />
                     <div ng-messages="userForm.email.$error">
                         <div ng-message-exp="['required', 'maxlength', 'pattern']">
                             请填写有效的邮箱地址。
@@ -21,7 +21,7 @@
             <div layout-gt-sm="row">
                 <md-input-container class="md-block" flex-gt-sm>
                     <label>密码</label>
-                    <input name="password" type="password" ng-model="user.password" required minlength="6" />
+                    <input name="password" type="password" ng-model="vm.user.password" required minlength="6" />
                     <div ng-messages="userForm.password.$error">
                         <div ng-message-exp="['required', 'minlength']">
                             请填写正确的密码。
@@ -30,7 +30,7 @@
                 </md-input-container>
             </div>
             <div layout="row">
-                <md-button class="md-warn md-raised md-hue-2" flex type="submit">登录</md-button>
+                <md-button class="md-warn md-raised md-hue-2" flex type="submit" ng-click="vm.log()">登录</md-button>
             </div>
             <div>
                 <hr>

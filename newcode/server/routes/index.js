@@ -55,7 +55,15 @@ router.post('/log', function (req, res, next) {
 
 
     });
+});
 
+router.get('/logout', function (req, res, next) {
+    console.log('req.session.user', req.session.user);
+    if (req.session.user) {
+        delete req.session.user;
+        console.log('req.session.user after delete', req.session.user);
+    }
+    res.apiSuccess({ 'msg': 'OK' });
 });
 
 

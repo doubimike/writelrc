@@ -104,9 +104,37 @@ angular
                 templateUrl: 'views/test.html',
                 controller: 'TestCtrl',
                 controllerAs: 'vm'
-            })
-
+            });
     })
-    .run(function ($rootScope) {
-        $rootScope.globals = {};
+    .run(function ($rootScope, $cookieStore, $location) {
+        $rootScope.globals = $cookieStore.get('globals') || {};
+        $rootScope.$on('$locationChangeStart', function (event, next, current) {
+            var path = $location.path();
+            var restrictedPage = (path === '/test');
+            var loggedIn = $rootScope.globals.user;
+            if (restrictedPage && !loggedIn) {
+                return $location.path('/login');
+            }
+            if (loggedIn) {
+                if (path == '/login' || path == '/register') {
+                    $location.path('/after-login');
+                }
+            }
+
+        });
+    }).controller('LogoutCtrl', function ($http, $rootScope, $cookieStore, $state) {
+        var vm = this;
+        vm.logout = logout;
+
+        function logout() {
+            $http.get('/logout').then(function (data) {
+                if (data.status == 200) {
+                    $rootScope.globals = {};
+                    $cookieStore.remove('globals');
+                    $state.go('main');
+                }
+            }, function (data) {
+                console.log(data);
+            });
+        }
     });

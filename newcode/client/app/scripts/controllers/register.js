@@ -20,6 +20,7 @@ angular.module('clientApp')
 
                     $rootScope.globals.user = data.data.result;
                     console.log('$rootScope.globals.user', $rootScope.globals.user);
+                    $cookieStore.put('globals', $rootScope.globals);
                     $state.go('afterLogin');
                 }
             }, function (data) {
