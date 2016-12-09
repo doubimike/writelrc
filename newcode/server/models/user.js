@@ -17,7 +17,6 @@ User.prototype.save = function (callback) {
         email: this.email
     };
 
-    console.log(user)
 
     async.waterfall([
             function (cb) {
@@ -44,7 +43,6 @@ User.prototype.save = function (callback) {
 };
 
 User.get = function (name, email, callback) {
-    console.log(name, email)
     async.waterfall([
         function (cb) {
             mongodb.open(function (err, db) {
@@ -62,13 +60,13 @@ User.get = function (name, email, callback) {
             });
         },
         function (user, collection, cb) {
-            collection.findOne({ email: email }, function (err, email) {
-                cb(err, user, email);
+            collection.findOne({ email: email }, function (err, userEmail) {
+                cb(err, user, userEmail);
             });
         }
-    ], function (err, user, email) {
+    ], function (err, user, userEmail) {
         mongodb.close();
-        callback(err, user, email);
+        callback(err, user, userEmail);
     });
 };
 
