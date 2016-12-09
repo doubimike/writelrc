@@ -20,7 +20,9 @@ angular
         'ngMaterial',
         'ui.router'
     ])
-    .config(function($stateProvider, $urlRouterProvider, $mdThemingProvider) {
+    .config(function ($stateProvider, $urlRouterProvider, $mdThemingProvider) {
+
+
         var customBlueMap = $mdThemingProvider.extendPalette('light-blue', {
             'contrastDefaultColor': 'light',
             'contrastDarkColors': ['50'],
@@ -104,4 +106,7 @@ angular
                 controllerAs: 'vm'
             })
 
+    })
+    .run(function ($rootScope) {
+        $rootScope.globals = {};
     });

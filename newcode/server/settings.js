@@ -3,4 +3,4 @@ module.exports = {
     db: 'lrc',
     host: 'localhost',
     port: 27017
-}
+};

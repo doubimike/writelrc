@@ -22,7 +22,7 @@ app.use(session({
     key: settings.db,
     cookie: { maxAge: 1000 * 60 * 60 * 24 * 30 },
     store: new MongoStore({
-        url: 'mongodb://localhost/lrc'
+        url: 'mongodb://' + settings.host + '/' + settings.db
     })
 }));
 // view engine setup
@@ -39,11 +39,50 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '../client')));
 app.use(express.static(path.join(__dirname, '../client/.tmp')));
 app.use(express.static(path.join(__dirname, '../client/app')));
+
+app.use(extendAPIOutput);
+app.use(apiErrorHandler);
+
 app.use('/', routes);
 app.use('/users', users);
 
+// 中间件
+function extendAPIOutput(req, res, next) {
+    res.apiSuccess = function (data) {
+        res.json({
+            status: 200,
+            result: data
+        });
+    };
+    res.apiError = function (err) {
+        res.json({
+            status: 'Error',
+            error_code: err.error_code || 'UNKNOW',
+            error_message: err.error_message || err.toString()
+        });
+    };
+
+    next();
+}
+
+function createApiError(code, msg) {
+    var err = new Error(msg);
+    err.error_code = code;
+    err.error_message = msg;
+    return err;
+}
+
+function apiErrorHandler(err, req, res, next) {
+    if (typeof res.apiError === 'function') {
+        return res.apiError(err);
+    }
+
+    next();
+}
+
+
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     var err = new Error('Not Found');
     err.status = 404;
     next(err);
@@ -54,7 +93,7 @@ app.use(function(req, res, next) {
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
-    app.use(function(err, req, res, next) {
+    app.use(function (err, req, res, next) {
         res.status(err.status || 500);
         // res.render('error', {
         //     message: err.message,
@@ -67,7 +106,7 @@ if (app.get('env') === 'development') {
 
 // production error handler
 // no stacktraces leaked to user
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
     res.status(err.status || 500);
     // res.render('error', {
     //     message: err.message,
