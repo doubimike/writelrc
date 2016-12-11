@@ -16,6 +16,7 @@
                             请填写有效的邮箱地址。
                         </div>
                     </div>
+                    <!-- <div ng-show="vm.emailError">没有用此邮箱注册的用户。</div> -->
                 </md-input-container>
             </div>
             <div layout-gt-sm="row">
@@ -30,7 +31,7 @@
                 </md-input-container>
             </div>
             <div layout="row">
-                <md-button class="md-warn md-raised md-hue-2" flex type="submit" ng-click="vm.log()">登录</md-button>
+                <md-button class="md-warn md-raised md-hue-2" flex type="submit" ng-click="vm.log(userForm.$valid)">登录</md-button>
             </div>
             <div>
                 <hr>
@@ -55,7 +56,7 @@
         </form>
     </div>
     <div layout="row" layout-align="space-between">
-        <span><a ui-sref="forgot-pass">忘记密码</a></span>
+        <span><a ui-sref="forgotPass">忘记密码</a></span>
         <span>|</span>
         <span><a ui-sref="register">注册</a></span>
     </div>

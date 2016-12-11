@@ -20,7 +20,7 @@ angular
         'ngMaterial',
         'ui.router'
     ])
-    .config(function ($stateProvider, $urlRouterProvider, $mdThemingProvider) {
+    .config(function($stateProvider, $urlRouterProvider, $mdThemingProvider) {
 
 
         var customBlueMap = $mdThemingProvider.extendPalette('light-blue', {
@@ -103,12 +103,12 @@ angular
                 url: '/test',
                 templateUrl: 'views/test.html',
                 controller: 'TestCtrl',
-                controllerAs: 'vm'
+                controllerAs: 'ctrl'
             });
     })
-    .run(function ($rootScope, $cookieStore, $location) {
+    .run(function($rootScope, $cookieStore, $location) {
         $rootScope.globals = $cookieStore.get('globals') || {};
-        $rootScope.$on('$locationChangeStart', function (event, next, current) {
+        $rootScope.$on('$locationChangeStart', function(event, next, current) {
             var path = $location.path();
             var restrictedPage = (path === '/test');
             var loggedIn = $rootScope.globals.user;
@@ -122,19 +122,67 @@ angular
             }
 
         });
-    }).controller('LogoutCtrl', function ($http, $rootScope, $cookieStore, $state) {
+    }).controller('LogoutCtrl', function($http, $rootScope, $cookieStore, $state) {
         var vm = this;
         vm.logout = logout;
 
         function logout() {
-            $http.get('/logout').then(function (data) {
+            $http.get('/logout').then(function(data) {
                 if (data.status == 200) {
                     $rootScope.globals = {};
                     $cookieStore.remove('globals');
                     $state.go('main');
                 }
-            }, function (data) {
+            }, function(data) {
                 console.log(data);
             });
         }
+    }).controller('GeneralCtrl', function GeneralCtrl($mdPanel) {
+        var vm = this;
+        vm._mdPanel = $mdPanel;
+        var panelRef;
+
+        GeneralCtrl.prototype.showMenu = function(ev) {
+            var position = vm._mdPanel.newPanelPosition()
+                .relativeTo('.menu')
+                .addPanelPosition(vm._mdPanel.xPosition.CENTER, vm._mdPanel.yPosition.BELOW);
+            var config = {
+                attachTo: angular.element(document.body),
+                controller: PanelMenuCtrl,
+                controllerAs: 'vm',
+                templateUrl: '../views/menu.tpl.html',
+                panelClass: 'menu-content',
+                position: position,
+                clickOutsideToClose: true,
+                escapeToClose: true,
+                focusOnOpen: false,
+                zIndex: 2
+            };
+
+            vm._mdPanel.open(config).then(function(result) {
+                panelRef = result;
+            });
+
+        }
+
+        function PanelMenuCtrl(mdPanelRef) {
+            this._mdPanelRef = mdPanelRef;
+        }
+
+        PanelMenuCtrl.prototype.closeMenu = function() {
+            var panelRef = this._mdPanelRef;
+            panelRef && panelRef.close().then(function() {
+                panelRef.destroy();
+            });
+        }
+
+        GeneralCtrl.prototype.closeMenu = function() {
+            console.log('closeMenu')
+            console.log(panelRef)
+            panelRef && panelRef.close().then(function() {
+                // angular.element(document.querySelector('.menu')).focus();
+                panelRef.destroy();
+            });
+        };
+
     });

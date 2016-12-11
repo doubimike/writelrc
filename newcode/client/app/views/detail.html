@@ -1,21 +1,18 @@
 <md-card>
     <md-card-title>
         <md-card-title-text>
-            <span class="md-headline">孤独</span>
+            <span class="md-headline">{{vm.lrc.title}}</span>
         </md-card-title-text>
     </md-card-title>
     <md-card-content>
-        <p>说不上为什么</p>
-        <p>我变得很主动</p>
-        <p>若爱上一个人什么都会值得去做</p>
-        <p>我想大声宣布...</p>
+        <p>{{vm.lrc.content}}</p>
     </md-card-content>
     <md-card-footer>
         <md-card-avatar>
-            <img class="md-user-avatar" src="https://material.angularjs.org/latest/img/icons/angular-logo.svg" width="24" height="24" />
+            <img class="md-user-avatar" src="https://material.angularjs.org/latest/img/icons/angular-logo.svg" width="24" height="24" />{{vm.lrc.author}}
         </md-card-avatar>
         <span>
-          30/11/2016 夜 于成都
+          {{vm.lrc.publishTime}} 夜 于成都
         </span>
         <div>
             <span>赞</span>
@@ -26,9 +23,9 @@
             </ul>
         </div>
     </md-card-footer>
-    <div layout="row">
+    <div layout="row">阅读：{{vm.lrc.views}} 喜欢：{{vm.lrc.likes}}
         <md-card-actions layout="row" layout-align="start center">
-            <md-button class="md-icon-button" aria-label="Favorite">
+            <md-button class="md-icon-button" aria-label="Favorite" ng-click="vm.like()">
                 <md-icon>favorite</md-icon>
             </md-button>
             <md-button class="md-icon-button" aria-label="Comment">

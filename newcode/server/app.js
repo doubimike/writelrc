@@ -7,6 +7,7 @@ var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
+var lrc = require('./routes/lrc');
 
 var settings = require('./settings');
 
@@ -41,20 +42,21 @@ app.use(express.static(path.join(__dirname, '../client/.tmp')));
 app.use(express.static(path.join(__dirname, '../client/app')));
 
 app.use(extendAPIOutput);
-app.use(apiErrorHandler);
+
 
 app.use('/', routes);
 app.use('/users', users);
+app.use('/lrc', lrc);
 
 // 中间件
 function extendAPIOutput(req, res, next) {
-    res.apiSuccess = function (data) {
+    res.apiSuccess = function(data) {
         res.json({
             status: 200,
             result: data
         });
     };
-    res.apiError = function (err) {
+    res.apiError = function(err) {
         res.json({
             status: 'Error',
             error_code: err.error_code || 'UNKNOW',
@@ -82,38 +84,38 @@ function apiErrorHandler(err, req, res, next) {
 
 
 // catch 404 and forward to error handler
-app.use(function (req, res, next) {
+app.use(function(req, res, next) {
     var err = new Error('Not Found');
     err.status = 404;
     next(err);
 });
-
+app.use(apiErrorHandler);
 // error handlers
 
 // development error handler
 // will print stacktrace
-if (app.get('env') === 'development') {
-    app.use(function (err, req, res, next) {
-        res.status(err.status || 500);
-        // res.render('error', {
-        //     message: err.message,
-        //     error: err
-        // });
+// if (app.get('env') === 'development') {
+//     app.use(function(err, req, res, next) {
+//         res.status(err.status || 500);
+//         // res.render('error', {
+//         //     message: err.message,
+//         //     error: err
+//         // });
 
-        res.json({ error: err });
-    });
-}
+//         res.json({ error: err });
+//     });
+// }
 
 // production error handler
 // no stacktraces leaked to user
-app.use(function (err, req, res, next) {
-    res.status(err.status || 500);
-    // res.render('error', {
-    //     message: err.message,
-    //     error: {}
-    // });
-    res.json({ error: err });
-});
+// app.use(function(err, req, res, next) {
+//     res.status(err.status || 500);
+//     // res.render('error', {
+//     //     message: err.message,
+//     //     error: {}
+//     // });
+//     res.json({ error: err });
+// });
 
 
 module.exports = app;
