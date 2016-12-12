@@ -8,7 +8,7 @@
  * Controller of the clientApp
  */
 angular.module('clientApp')
-    .controller('DetailCtrl', function($http, $stateParams, $rootScope) {
+    .controller('DetailCtrl', function ($http, $stateParams, $rootScope) {
         var vm = this;
         var id = $stateParams.lrcID;
         console.log(id);
@@ -19,20 +19,26 @@ angular.module('clientApp')
 
 
         function init() {
-            $http.get('/lrc/' + id).then(function(data) {
-                console.log(data)
-                if (data.status == 200) {
-                    vm.lrc = data.data;
+            $http.get('/lrc/detail/' + id).then(function (res) {
+                console.log(res)
+                if (res.status == 200) {
+                    vm.lrc = res.data;
                 }
-            }, function(data) {
-                console.log(data);
-            })
+            }, function (res) {
+                console.log(res);
+            });
         };
 
         function like() {
-            if (!$rootScope.globals.user) {
-                $state.go('login');
-            }
+            // if (!$rootScope.globals.user) {
+            //     $state.go('login');
+            // }
+            $http.post('/lrc/like/' + id).then(function (res) {
+                console.log('like');
+
+            }, function (res) {
+
+            });
         }
 
     });

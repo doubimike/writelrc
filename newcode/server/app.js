@@ -50,13 +50,13 @@ app.use('/lrc', lrc);
 
 // 中间件
 function extendAPIOutput(req, res, next) {
-    res.apiSuccess = function(data) {
+    res.apiSuccess = function (data) {
         res.json({
-            status: 200,
+            status: 'OK',
             result: data
         });
     };
-    res.apiError = function(err) {
+    res.apiError = function (err) {
         res.json({
             status: 'Error',
             error_code: err.error_code || 'UNKNOW',
@@ -84,7 +84,7 @@ function apiErrorHandler(err, req, res, next) {
 
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     var err = new Error('Not Found');
     err.status = 404;
     next(err);

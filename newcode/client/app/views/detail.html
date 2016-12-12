@@ -25,7 +25,10 @@
     </md-card-footer>
     <div layout="row">阅读：{{vm.lrc.views}} 喜欢：{{vm.lrc.likes}}
         <md-card-actions layout="row" layout-align="start center">
-            <md-button class="md-icon-button" aria-label="Favorite" ng-click="vm.like()">
+            <!-- <md-button class="md-icon-button" aria-label="Favorite" ng-click="vm.like()">
+                <md-icon>favorite</md-icon>
+            </md-button> -->
+            <md-button ng-class="{'md-icon-button md-accent' : vm.lrc.likeByUser, 'md-icon-button' : !vm.lrc.likeByUser}" aria-label="Favorite" ng-click="vm.like()">
                 <md-icon>favorite</md-icon>
             </md-button>
             <md-button class="md-icon-button" aria-label="Comment">

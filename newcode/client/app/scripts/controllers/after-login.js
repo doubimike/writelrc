@@ -8,8 +8,30 @@
  * Controller of the clientApp
  */
 angular.module('clientApp')
-    .controller('AfterLoginCtrl', function() {
+    .controller('AfterLoginCtrl', function (http) {
         var vm = this;
+        vm.lrcList = [];
+
+        // vm.lrcList = http.get('/lrc/all');
+        // http.get('/lrc/all').then(function (res) {
+        //     vm.lrcList = res.data.lrcList;
+        // }, function (res) {
+
+        // });
+        // 
+        http.get('/lrc/all').then(function (res) {
+            console.log(res);
+
+            vm.lrcList = res.data;
+        })
+        vm.loadMore = function () {
+            http.get('/lrc/all').then(function (res) {
+                console.log(res);
+
+                vm.lrcList = res.data;
+            })
+        }
+
         vm.lrcs = [{
             title: '简单爱',
             author: '周杰伦',

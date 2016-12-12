@@ -7,8 +7,8 @@
                     <md-tab label="佳作">
                         <md-content class="md-padding">
                             <div layout="row">
-                                <md-card ng-repeat="lrc in vm.lrcs" flex="33" class="lrc-card">
-                                    <a ui-href="" layout="column" flex>
+                                <md-card ng-repeat="lrc in vm.lrcList" flex="33" class="lrc-card">
+                                    <a ui-sref="detail({lrcID: lrc._id})" layout="column" flex>
                                         <md-card-title>
                                             <md-card-title-text>
                                                 <span class="md-headline">{{lrc.title}}</span>
@@ -20,8 +20,12 @@
                                         </md-card-content>
                                         <div flex></div>
                                         <md-card-footer layout="row" layout-align="space-between center">
-                                            <div>{{lrc.reads}}次阅读</div>
-                                            <div>{{lrc.likes}}次喜欢</div>
+                                            <div>{{lrc.views}}次阅读</div>
+                                            <div><span>{{lrc.likes}}次喜欢</span>
+                                                <!-- <md-button ng-class="{'md-icon-button md-accent' : vm.lrc.likeByUser, 'md-icon-button' : !vm.lrc.likeByUser}" aria-label="Favorite" ng-click="vm.like()">
+                                                    <md-icon>favorite</md-icon>
+                                                </md-button> -->
+                                            </div>
                                             <div>{{lrc.collects}}次收藏</div>
                                             <!-- <md-card-actions layout="row" layout-align="end center">
                                             （{{lrc.like}}）
@@ -43,7 +47,7 @@
                                 </a>
                             </div>
                             <div layout="row" layout-align="center">
-                                <md-button class="md-raised md-primary">查看更多</md-button>
+                                <md-button class="md-raised md-primary" ng-click="vm.loadMore()">查看更多</md-button>
                             </div>
                         </md-content>
                     </md-tab>

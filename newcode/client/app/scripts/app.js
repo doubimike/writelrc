@@ -16,12 +16,68 @@ angular
         'ngMessages',
         'ngResource',
         'ngSanitize',
-        'ngTouch',
+        // 'ngTouch',
         'ngMaterial',
         'ui.router'
     ])
-    .config(function($stateProvider, $urlRouterProvider, $mdThemingProvider) {
+    .factory('sessionInjector', ['$log', function ($log) {
+        $log.debug('$log is here to show you that this is a regular factory with injection');
 
+        var sessionInjector = {
+
+            request: function (config) {
+                if (true) {
+                    config.headers['x-session-token'] = 2;
+                } else {
+                    config.headers['x-session-token'] = 1;
+                }
+                return config;
+            }
+
+        };
+
+        return sessionInjector;
+    }])
+    .factory('timestampMarker', function () {
+        var timestampMarker = {
+            request: function (config) {
+                config.requestTimeStamp = new Date().getTime();
+                return config;
+            },
+            response: function (response) {
+                response.config.responseTimeStamp = new Date().getTime();
+                return config;
+            }
+        };
+        return timestampMarker;
+    })
+    .factory('http', ['$http',
+        function (http) {
+            return {
+                get: function (getUrl) {
+                    return http.get(getUrl).then(function (response) {
+                        return response;
+                    }, function (res) {
+                        alert(JSON.stringify(res));
+                    });
+                },
+                post: function (postUrl, data) {
+                    return http.post(postUrl, data).then(function (response) {
+                        return response;
+                    }, function () {
+                        //handle errors here
+                    });
+                },
+                // other $http wrappers
+            };
+        }
+    ])
+    .config(function ($stateProvider, $urlRouterProvider, $mdThemingProvider, $qProvider, $httpProvider) {
+        $httpProvider.interceptors.push('sessionInjector');
+        $httpProvider.interceptors.push('timestampMarker');
+
+
+        $qProvider.errorOnUnhandledRejections(false);
 
         var customBlueMap = $mdThemingProvider.extendPalette('light-blue', {
             'contrastDefaultColor': 'light',
@@ -106,9 +162,9 @@ angular
                 controllerAs: 'ctrl'
             });
     })
-    .run(function($rootScope, $cookieStore, $location) {
+    .run(function ($rootScope, $cookieStore, $location) {
         $rootScope.globals = $cookieStore.get('globals') || {};
-        $rootScope.$on('$locationChangeStart', function(event, next, current) {
+        $rootScope.$on('$locationChangeStart', function (event, next, current) {
             var path = $location.path();
             var restrictedPage = (path === '/test');
             var loggedIn = $rootScope.globals.user;
@@ -122,18 +178,18 @@ angular
             }
 
         });
-    }).controller('LogoutCtrl', function($http, $rootScope, $cookieStore, $state) {
+    }).controller('LogoutCtrl', function ($http, $rootScope, $cookieStore, $state) {
         var vm = this;
         vm.logout = logout;
 
         function logout() {
-            $http.get('/logout').then(function(data) {
+            $http.get('/logout').then(function (data) {
                 if (data.status == 200) {
                     $rootScope.globals = {};
                     $cookieStore.remove('globals');
                     $state.go('main');
                 }
-            }, function(data) {
+            }, function (data) {
                 console.log(data);
             });
         }
@@ -142,7 +198,7 @@ angular
         vm._mdPanel = $mdPanel;
         var panelRef;
 
-        GeneralCtrl.prototype.showMenu = function(ev) {
+        GeneralCtrl.prototype.showMenu = function (ev) {
             var position = vm._mdPanel.newPanelPosition()
                 .relativeTo('.menu')
                 .addPanelPosition(vm._mdPanel.xPosition.CENTER, vm._mdPanel.yPosition.BELOW);
@@ -159,7 +215,7 @@ angular
                 zIndex: 2
             };
 
-            vm._mdPanel.open(config).then(function(result) {
+            vm._mdPanel.open(config).then(function (result) {
                 panelRef = result;
             });
 
@@ -169,17 +225,17 @@ angular
             this._mdPanelRef = mdPanelRef;
         }
 
-        PanelMenuCtrl.prototype.closeMenu = function() {
+        PanelMenuCtrl.prototype.closeMenu = function () {
             var panelRef = this._mdPanelRef;
-            panelRef && panelRef.close().then(function() {
+            panelRef && panelRef.close().then(function () {
                 panelRef.destroy();
             });
         }
 
-        GeneralCtrl.prototype.closeMenu = function() {
+        GeneralCtrl.prototype.closeMenu = function () {
             console.log('closeMenu')
             console.log(panelRef)
-            panelRef && panelRef.close().then(function() {
+            panelRef && panelRef.close().then(function () {
                 // angular.element(document.querySelector('.menu')).focus();
                 panelRef.destroy();
             });
