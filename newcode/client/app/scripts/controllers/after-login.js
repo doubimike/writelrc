@@ -8,27 +8,24 @@
  * Controller of the clientApp
  */
 angular.module('clientApp')
-    .controller('AfterLoginCtrl', function (http) {
+    .controller('AfterLoginCtrl', function($http) {
         var vm = this;
         vm.lrcList = [];
 
-        // vm.lrcList = http.get('/lrc/all');
-        // http.get('/lrc/all').then(function (res) {
-        //     vm.lrcList = res.data.lrcList;
-        // }, function (res) {
 
-        // });
-        // 
-        http.get('/lrc/all').then(function (res) {
-            console.log(res);
-
-            vm.lrcList = res.data;
+        $http.get('/lrc/all').then(function(res) {
+            console.log(res)
+            vm.lrcList = res.data.lrcList;
+        }, function(res) {
+            alert('失败，请重试。具体信息：' + JSON.stringify(res));
         })
-        vm.loadMore = function () {
-            http.get('/lrc/all').then(function (res) {
+        vm.loadMore = function() {
+            $http.get('/lrc/all').then(function(res) {
                 console.log(res);
 
                 vm.lrcList = res.data;
+            }, function(res) {
+                alert('失败，请重试。具体信息：' + JSON.stringify(res));
             })
         }
 

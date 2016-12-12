@@ -34,7 +34,7 @@ router.post('/reg', function(req, res, next) {
             }
             req.session.user = user.ops[0];
 
-            res.apiSuccess({ name: user.ops[0].name, email: user.ops[0].email, head: user.ops[0].head });
+            res.apiSuccess({ name: user.ops[0].name, email: user.ops[0].email, head: user.ops[0].head, _id: user.ops[0]._id });
         });
     });
 });
@@ -50,8 +50,13 @@ router.post('/log', function(req, res, next) {
             return next(err);
         }
         req.session.user = user;
-
-        res.apiSuccess({ name: user.name, email: user.email });
+        console.log('user', user)
+        res.apiSuccess({
+            name: user.name,
+            email: user.email,
+            head: user.head,
+            _id: user._id
+        });
 
 
     });

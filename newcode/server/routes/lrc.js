@@ -1,7 +1,7 @@
 var router = require('express').Router();
 var Lrc = require('../models/lrc');
 var util = require('../util/index');
-router.post('/write', function (req, res, next) {
+router.post('/write', function(req, res, next) {
     var title = req.body.title;
     var content = req.body.content;
     var bg = req.body.bg;
@@ -16,7 +16,7 @@ router.post('/write', function (req, res, next) {
         publishTime: publishTime,
     });
 
-    lrc.save(function (err, lrc) {
+    lrc.save(function(err, lrc) {
         if (err) {
             return next(err);
         };
@@ -26,9 +26,20 @@ router.post('/write', function (req, res, next) {
 
 
 
-router.post('/like/:id', function (req, res, next) {
+router.post('/like/:id', function(req, res, next) {
+    var user = req.session.user;
+    var likeOrUnlike = req.body.likeOrUnlike;
+    if (likeOrUnlike) {
+        likeOrUnlike = 1;
+    } else {
+        likeOrUnlike = -1;
+    }
+    console.log('likeOrUnlike', likeOrUnlike);
+    if (!user) {
+        return next(util.createApiError(40006, '请登录'));
+    }
     var id = req.params.id;
-    Lrc.like(id, 1, function (err, lrc) {
+    Lrc.like(id, likeOrUnlike, function(err, lrc) {
         if (err) {
             return next(err);
         }
@@ -36,13 +47,15 @@ router.post('/like/:id', function (req, res, next) {
             return next(util.createApiError(40005, '没有这篇歌词'));
         }
         if (lrc) {
-            return res.send(lrc);
+            return res.apiSuccess(lrc);
         }
-    });
+    }, user._id);
 });
 
-router.get('/all', function (req, res, next) {
-    Lrc.getAll(function (err, lrcs) {
+router.get('/all', function(req, res, next) {
+    console.log(Object.keys(req));
+    // console.log(req.headers);
+    Lrc.getAll(function(err, lrcs) {
         if (err) {
             res.next(err);
         } else {
@@ -52,9 +65,9 @@ router.get('/all', function (req, res, next) {
     });
 });
 
-router.get('/detail/:id', function (req, res, next) {
+router.get('/detail/:id', function(req, res, next) {
     var id = req.params.id;
-    Lrc.get(id, function (err, lrc) {
+    Lrc.get(id, function(err, lrc) {
         if (err) {
             return next(err);
         }
@@ -67,7 +80,7 @@ router.get('/detail/:id', function (req, res, next) {
     });
 });
 
-router.get('/test', function (req, res, next) {
+router.get('/test', function(req, res, next) {
     console.log('test')
     res.send('ok');
 });

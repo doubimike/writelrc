@@ -8,7 +8,7 @@
  * Controller of the clientApp
  */
 angular.module('clientApp')
-    .controller('LoginCtrl', function ($http, $rootScope, $state, $cookieStore, $scope) {
+    .controller('LoginCtrl', function($http, $rootScope, $state, $cookieStore, $scope) {
         var vm = this;
         vm.log = log;
 
@@ -17,7 +17,7 @@ angular.module('clientApp')
                 $http.post('/log', {
                     email: vm.user.email,
                     password: vm.user.password
-                }).then(function (res) {
+                }).then(function(res) {
                     console.log(res);
                     if (res.data.error_code == 40003) {
                         vm.emailError = true;
@@ -29,14 +29,12 @@ angular.module('clientApp')
 
                     if (res.data.status == 'OK') {
                         // 设置全局变量
-                        $rootScope.globals.user = data.data.result;
+                        $rootScope.globals.user = res.data.result;
                         $cookieStore.put('globals', $rootScope.globals);
                         $state.go('afterLogin');
                     }
-                }, function (res) {
-                    alert(JSON.stringify(res));
-                    console.log(res);
-
+                }, function(res) {
+                    uitl.errorHandler(res);
                 });
             }
         }
