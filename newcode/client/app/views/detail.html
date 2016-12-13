@@ -50,6 +50,15 @@
                 <div class="md-list-item-text" layout="column">
                     <h3>{{item.authorName}}</h3>
                     <h3>{{item.content}}</h3>
+                    <p>{{item.commentTime}}</p>
+                </div>
+                <div>
+                    <md-button ng-click="vm.replyComment()">
+                        <md-icon> comment </md-icon>
+                    </md-button>
+                    <md-button ng-click="vm.deleteComment($event,item)" ng-show="$root.globals.user.name==item.authorName">
+                        <md-icon> delete </md-icon>
+                    </md-button>
                 </div>
             </md-list-item>
             <md-list-item ng-show="vm.lrc.comments.length===0">

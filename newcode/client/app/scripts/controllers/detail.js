@@ -8,7 +8,7 @@
  * Controller of the clientApp
  */
 angular.module('clientApp')
-    .controller('DetailCtrl', function ($http, $stateParams, $rootScope, $state, $mdDialog, $scope) {
+    .controller('DetailCtrl', function($http, $stateParams, $rootScope, $state, $mdDialog, $scope) {
         var vm = this;
         var id = $stateParams.lrcID;
         var comparescope = $scope;
@@ -17,16 +17,19 @@ angular.module('clientApp')
         vm.likeByUser = false;
         vm.comments = [];
         vm.addComment = addComment;
+        // vm.replyComment = replyComment;
+        vm.deleteComment = deleteComment;
         init();
-        $scope.$on('commentsChange', function (event, msg) {
-            console.log('msg', msg);
+        $scope.$on('commentsChangeFound', function(event, msg) {
+            vm.lrc.comments = msg;
+        })
+        $rootScope.$on('commentsChange', function(event, msg) {
+            $rootScope.$broadcast('commentsChangeFound', msg);
 
         })
 
-
-
         function init() {
-            $http.get('/lrc/detail/' + id).then(function (res) {
+            $http.get('/lrc/detail/' + id).then(function(res) {
                 console.log(res)
                 if (res.status == 200) {
                     vm.lrc = res.data;
@@ -35,7 +38,7 @@ angular.module('clientApp')
                     console.log('vm.lrc.likeIds', vm.lrc.likeIds)
                     console.log('$rootScope.globals.user', $rootScope.globals.user)
                 }
-            }, function (res) {
+            }, function(res) {
                 console.log('')
 
             });
@@ -45,7 +48,7 @@ angular.module('clientApp')
             if (!$rootScope.globals.user) {
                 return $state.go('login');
             }
-            $http.post('/lrc/like/' + id, { likeOrUnlike: !vm.likeByUser }).then(function (res) {
+            $http.post('/lrc/like/' + id, { likeOrUnlike: !vm.likeByUser }).then(function(res) {
                 console.log('res', res)
                 if (res.data.status == 'OK') {
                     vm.likeByUser = !vm.likeByUser;
@@ -59,7 +62,7 @@ angular.module('clientApp')
 
                 }
 
-            }, function (res) {
+            }, function(res) {
 
             });
         }
@@ -80,15 +83,15 @@ angular.module('clientApp')
             function CommentCtrl($mdDialog, $scope) {
 
                 var vm = this;
-                vm.cancel = function () {
+                vm.cancel = function() {
                     $mdDialog.cancel();
                 };
-                vm.submit = function (valid) {
+                vm.submit = function(valid) {
                     if (valid) {
                         $http.post('/lrc/comment', {
                             lrcId: id,
                             content: vm.comment.content
-                        }).then(function (res) {
+                        }).then(function(res) {
                             if (res.data.status == 'OK') {
                                 // $scope.vm.lrc.comments = [];
                                 console.log('res.data.result', res.data.result)
@@ -97,7 +100,7 @@ angular.module('clientApp')
                                 $mdDialog.cancel();
                             }
 
-                        }, function (res) {
+                        }, function(res) {
                             util.errorHandler(res);
                         });
                     }
@@ -105,7 +108,22 @@ angular.module('clientApp')
             }
         }
 
+        function deleteComment(ev, comment) {
+            var confirm = $mdDialog.confirm().title('确定要删除此条评论么？')
+                .ok('确定')
+                .cancel('取消');
+            $mdDialog.show(confirm).then(function() {
+                $http.delete('/lrc/comment', { params: { lrcId: id, comment: comment } }).then(function(res) {
+                    if (res.data.status == 'OK') {
+                        $scope.$emit('commentsChange', res.data.result)
+                    }
+                }, function(res) {
+                    console.log(res);
+                })
+            }, function() {
 
+            })
+        };
 
 
     });
