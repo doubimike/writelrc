@@ -1,10 +1,29 @@
-<div class="demo-md-panel md-padding">
-    <div layout="row">
-        <div flex="33">
-            <div class="demo-md-panel-content">
-                <md-button class="md-primary md-raised demo-menu-open-button" ng-click="ctrl.showMenu($event)">
-                    Select Menu
-                </md-button>
-            </div>
-        </div>
+<div>
+    <div>
+        <md-button ng-click="showPrerenderedDialog()" class="md-raised md-warn">
+            Employee Alert!
+        </md-button>
     </div>
+    <div>
+        <md-button ng-click="showDialog($event)" class="md-raised">
+            Custom Dialog
+        </md-button>
+    </div>
+    <div>
+        <md-button ng-click="closeAlert()" ng-disabled="!hasAlert()" class="md-raised">
+            Close Alert
+        </md-button>
+    </div>
+    <div>
+        <md-button ng-click="showGreeting($event)" class="md-raised md-primary">
+            Greet Employee
+        </md-button>
+    </div>
+</div>
+<div style="visibility: hidden">
+    <div class="md-dialog-container" id="myStaticDialog">
+        <md-dialog>
+            This is a pre-rendered dialog.
+        </md-dialog>
+    </div>
+</div>

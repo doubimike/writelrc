@@ -8,134 +8,63 @@
  * Controller of the clientApp
  */
 angular.module('clientApp')
-    .controller('TestCtrl', function BasicDemoCtrl($mdPanel) {
-        this._mdPanel = $mdPanel;
+    .controller('TestCtrl', function BasicDemoCtrl($scope, $mdDialog) {
+        var alert;
+        $scope.showAlert = showAlert;
+        $scope.showDialog = showDialog;
+        $scope.items = [1, 2, 3];
 
-        this.desserts = [
-            'Apple Pie',
-            'Donut',
-            'Fudge',
-            'Cupcake',
-            'Ice Cream',
-            'Tiramisu'
-        ];
+        // Internal method
+        function showAlert() {
+            alert = $mdDialog.alert({
+                title: 'Attentionaaa',
+                textContent: 'This is an example of how easy dialogs can be!',
+                ok: 'Close'
+            });
 
-        this.selected = { favoriteDessert: 'Donut' };
-        this.disableParentScroll = false;
+            $mdDialog
+                .show(alert)
+                .finally(function () {
+                    alert = undefined;
+                });
+        }
+        $scope.showPrerenderedDialog = function () {
+            $mdDialog.show({
+                contentElement: '#myStaticDialog',
+                parent: angular.element(document.body)
+            });
+        };
 
-        BasicDemoCtrl.prototype.showMenu = function(ev) {
-            var position = this._mdPanel.newPanelPosition()
-                .relativeTo('.demo-menu-open-button')
-                .addPanelPosition(this._mdPanel.xPosition.ALIGN_START, this._mdPanel.yPosition.BELOW);
-
-            var config = {
-                attachTo: angular.element(document.body),
-                controller: PanelMenuCtrl,
-                controllerAs: 'ctrl',
-                template: '<div class="demo-menu-example" ' +
-                    '     aria-label="Select your favorite dessert." ' +
-                    '     role="listbox">' +
-                    '  <div class="demo-menu-item" ' +
-                    '       ng-class="{selected : dessert == ctrl.favoriteDessert}" ' +
-                    '       aria-selected="{{dessert == ctrl.favoriteDessert}}" ' +
-                    '       tabindex="-1" ' +
-                    '       role="option" ' +
-                    '       ng-repeat="dessert in ctrl.desserts" ' +
-                    '       ng-click="ctrl.selectDessert(dessert)"' +
-                    '       ng-keydown="ctrl.onKeydown($event, dessert)">' +
-                    '    {{ dessert }} ' +
-                    '  </div>' +
-                    '</div>',
-                panelClass: 'demo-menu-example',
-                position: position,
+        function showDialog($event) {
+            var parentEl = angular.element(document.body);
+            $mdDialog.show({
+                parent: parentEl,
+                targetEvent: $event,
+                template: '<md-dialog aria-label="List dialog">' +
+                    '  <md-dialog-content>' +
+                    '    <md-list>' +
+                    '      <md-list-item ng-repeat="item in items">' +
+                    '       <p>Number {{item}}</p>' +
+                    '      ' +
+                    '    </md-list-item></md-list>' +
+                    '  </md-dialog-content>' +
+                    '  <md-dialog-actions>' +
+                    '    <md-button ng-click="closeDialog()" class="md-primary">' +
+                    '      Close Dialog' +
+                    '    </md-button>' +
+                    '  </md-dialog-actions>' +
+                    '</md-dialog>',
                 locals: {
-                    'selected': this.selected,
-                    'desserts': this.desserts
+                    items: $scope.items
                 },
-                openFrom: ev,
-                clickOutsideToClose: true,
-                escapeToClose: true,
-                focusOnOpen: false,
-                zIndex: 2
-            };
-
-            this._mdPanel.open(config);
-        };
-
-        function PanelDialogCtrl(mdPanelRef) {
-            this._mdPanelRef = mdPanelRef;
-        }
-
-        PanelDialogCtrl.prototype.closeDialog = function() {
-            var panelRef = this._mdPanelRef;
-
-            panelRef && panelRef.close().then(function() {
-                angular.element(document.querySelector('.demo-dialog-open-button')).focus();
-                panelRef.destroy();
+                controller: DialogController
             });
-        };
 
-        function PanelMenuCtrl(mdPanelRef, $timeout) {
-            this._mdPanelRef = mdPanelRef;
-            this.favoriteDessert = this.selected.favoriteDessert;
-            $timeout(function() {
-                var selected = document.querySelector('.demo-menu-item.selected');
-                if (selected) {
-                    angular.element(selected).focus();
-                } else {
-                    angular.element(document.querySelectorAll('.demo-menu-item')[0]).focus();
+            function DialogController($scope, $mdDialog, items) {
+                $scope.items = items;
+                $scope.closeDialog = function () {
+                    $mdDialog.hide();
                 }
-            });
+            }
         }
-
-        PanelMenuCtrl.prototype.selectDessert = function(dessert) {
-            this.selected.favoriteDessert = dessert;
-            this._mdPanelRef && this._mdPanelRef.close().then(function() {
-                angular.element(document.querySelector('.demo-menu-open-button')).focus();
-            });
-        };
-
-        PanelMenuCtrl.prototype.onKeydown = function($event, dessert) {
-            var handled;
-            switch ($event.which) {
-                case 38: // Up Arrow.
-                    var els = document.querySelectorAll('.demo-menu-item');
-                    var index = indexOf(els, document.activeElement);
-                    var prevIndex = (index + els.length - 1) % els.length;
-                    els[prevIndex].focus();
-                    handled = true;
-                    break;
-
-                case 40: // Down Arrow.
-                    var els = document.querySelectorAll('.demo-menu-item');
-                    var index = indexOf(els, document.activeElement);
-                    var nextIndex = (index + 1) % els.length;
-                    els[nextIndex].focus();
-                    handled = true;
-                    break;
-
-                case 13: // Enter.
-                case 32: // Space.
-                    this.selectDessert(dessert);
-                    handled = true;
-                    break;
-
-                case 9: // Tab.
-                    this._mdPanelRef && this._mdPanelRef.close();
-            }
-
-            if (handled) {
-                $event.preventDefault();
-                $event.stopImmediatePropagation();
-            }
-
-            function indexOf(nodeList, element) {
-                for (var item, i = 0; item = nodeList[i]; i++) {
-                    if (item === element) {
-                        return i;
-                    }
-                }
-                return -1;
-            }
-        };
     })
