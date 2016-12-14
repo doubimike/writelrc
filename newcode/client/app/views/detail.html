@@ -53,7 +53,7 @@
                     <p>{{item.commentTime}}</p>
                 </div>
                 <div>
-                    <md-button ng-click="vm.replyComment()">
+                    <md-button ng-click="vm.replyComment($event,item.authorName)">
                         <md-icon> comment </md-icon>
                     </md-button>
                     <md-button ng-click="vm.deleteComment($event,item)" ng-show="$root.globals.user.name==item.authorName">

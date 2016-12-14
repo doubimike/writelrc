@@ -1,7 +1,7 @@
 var router = require('express').Router();
 var Lrc = require('../models/lrc');
 var util = require('../util/index');
-router.post('/write', function(req, res, next) {
+router.post('/write', function (req, res, next) {
     var title = req.body.title;
     var content = req.body.content;
     var bg = req.body.bg;
@@ -16,7 +16,7 @@ router.post('/write', function(req, res, next) {
         publishTime: publishTime,
     });
 
-    lrc.save(function(err, lrc) {
+    lrc.save(function (err, lrc) {
         if (err) {
             return next(err);
         };
@@ -24,7 +24,7 @@ router.post('/write', function(req, res, next) {
     });
 })
 
-router.post('/like/:id', function(req, res, next) {
+router.post('/like/:id', function (req, res, next) {
     var user = req.session.user;
     var likeOrUnlike = req.body.likeOrUnlike;
     if (likeOrUnlike) {
@@ -37,7 +37,7 @@ router.post('/like/:id', function(req, res, next) {
         return next(util.createApiError(40006, '请登录'));
     }
     var id = req.params.id;
-    Lrc.like(id, likeOrUnlike, function(err, lrc) {
+    Lrc.like(id, likeOrUnlike, function (err, lrc) {
         if (err) {
             return next(err);
         }
@@ -50,10 +50,10 @@ router.post('/like/:id', function(req, res, next) {
     }, user._id);
 });
 
-router.get('/all', function(req, res, next) {
+router.get('/all', function (req, res, next) {
     console.log(Object.keys(req));
     // console.log(req.headers);
-    Lrc.getAll(function(err, lrcs) {
+    Lrc.getAll(function (err, lrcs) {
         if (err) {
             res.next(err);
         } else {
@@ -63,9 +63,9 @@ router.get('/all', function(req, res, next) {
     });
 });
 
-router.get('/detail/:id', function(req, res, next) {
+router.get('/detail/:id', function (req, res, next) {
     var id = req.params.id;
-    Lrc.get(id, function(err, lrc) {
+    Lrc.get(id, function (err, lrc) {
         if (err) {
             return next(err);
         }
@@ -78,22 +78,19 @@ router.get('/detail/:id', function(req, res, next) {
     });
 });
 
-router.get('/test', function(req, res, next) {
+router.get('/test', function (req, res, next) {
     console.log('test')
     res.send('ok');
 });
 
-router.post('/comment', function(req, res, next) {
+router.post('/comment', function (req, res, next) {
     var user = req.session.user;
     var lrcId = req.body.lrcId;
     var content = req.body.content;
-    var userName = user.name;
+    var userId = user._id;
 
-    console.log('lrcId', lrcId)
-    console.log('content', content)
-    console.log('req.body', req.body)
-    Lrc.comment(lrcId, content, userName, function(err, lrc) {
-        console.log('err', err)
+    Lrc.comment(lrcId, content, userId, function (err, lrc) {
+
         if (err) {
             return next(err);
         }
@@ -102,13 +99,13 @@ router.post('/comment', function(req, res, next) {
     });
 });
 
-router.delete('/comment', function(req, res, next) {
+router.delete('/comment', function (req, res, next) {
     var user = req.session.user;
     var lrcId = req.query.lrcId;
     var comment = req.query.comment;
     console.log('lrcId', lrcId)
     console.log('comment', comment)
-    Lrc.deleteComment(lrcId, comment, function(err, lrc) {
+    Lrc.deleteComment(lrcId, comment, function (err, lrc) {
         console.log('err', err)
         if (err) {
             return next(err);
