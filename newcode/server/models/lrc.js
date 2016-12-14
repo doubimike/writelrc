@@ -13,51 +13,51 @@ function Lrc(lrc) {
     this.likes = 0;
     this.likeIds = [];
     this.collects = 0;
-    this.comments = [];
+    // this.comments = [];
 }
 
-Lrc.prototype.save = function (callback) {
+Lrc.prototype.save = function(callback) {
     var lrc = this;
     async.waterfall([
-        function (cb) {
-            mongodb.open(function (err, db) {
+        function(cb) {
+            mongodb.open(function(err, db) {
                 cb(err, db);
             })
         },
-        function (db, cb) {
-            db.collection('lrc', function (err, collection) {
+        function(db, cb) {
+            db.collection('lrc', function(err, collection) {
                 cb(err, collection);
             })
         },
-        function (collection, cb) {
-            collection.insert(lrc, { safe: true }, function (err, lrc) {
+        function(collection, cb) {
+            collection.insert(lrc, { safe: true }, function(err, lrc) {
                 cb(err, lrc);
             })
         }
-    ], function (err, lrc) {
+    ], function(err, lrc) {
         mongodb.close();
         callback(err, lrc);
     })
 };
 
-Lrc.get = function (id, callback) {
+Lrc.get = function(id, callback) {
     try {
         var id = new ObjectId(id);
     } catch (err) {
         return callback(err);
     }
     async.waterfall([
-        function (cb) {
-            mongodb.open(function (err, db) {
+        function(cb) {
+            mongodb.open(function(err, db) {
                 cb(err, db);
             })
         },
-        function (db, cb) {
-            db.collection('lrc', function (err, collection) {
+        function(db, cb) {
+            db.collection('lrc', function(err, collection) {
                 cb(err, collection);
             })
         },
-        function (collection, cb) {
+        function(collection, cb) {
             collection.aggregate([{
                     $match: { _id: id }
                 }, {
@@ -65,18 +65,29 @@ Lrc.get = function (id, callback) {
                         from: 'comment',
                         localField: '_id',
                         foreignField: 'lrcId',
-                        as: 'comments_docs'
+                        as: 'comments'
+                    }
+                }, {
+                    $unwind: '$comments'
+                }, {
+                    $lookup: {
+                        from: 'user',
+                        localField: 'comments.authorId',
+                        foreignField: '_id',
+                        as: 'authorInfo'
                     }
                 }
-                //  , {
-                //     $lookup: {
-                //         from: 'usr',
-                //         localField: '_id',
-                //         foreignField: 'lrcId',
-                //         as: 'comments_docs'
-                //     }
-                // }
-            ], function (err, lrc) {
+
+                // , {
+                //                 $lookup: {
+                //                     from: 'user',
+                //                     localField: 'comments.authorId',
+                //                     foreignField: '_id',
+                //                     as: 'comments'
+                //                 }
+                //             }
+
+            ], function(err, lrc) {
                 console.log('err aggregate', err)
                 console.log('lrc', lrc)
                 cb(err, lrc[0], collection);
@@ -87,44 +98,44 @@ Lrc.get = function (id, callback) {
             //     cb(err, lrc, collection);
             // })
         },
-        function (lrc, collection, cb) {
+        function(lrc, collection, cb) {
             lrc.views += 1;
-            collection.save(lrc, function (err) {
+            collection.save(lrc, function(err) {
                 cb(err, lrc);
             });
         }
-    ], function (err, lrc) {
+    ], function(err, lrc) {
         mongodb.close();
         return callback(err, lrc);
     });
 }
 
 
-Lrc.like = function (id, likeOrUnlike, callback, userId) {
+Lrc.like = function(id, likeOrUnlike, callback, userId) {
     try {
         var id = new ObjectId(id);
     } catch (err) {
         return callback(err);
     }
     async.waterfall([
-        function (cb) {
-            mongodb.open(function (err, db) {
+        function(cb) {
+            mongodb.open(function(err, db) {
                 cb(err, db);
             })
         },
-        function (db, cb) {
-            db.collection('lrc', function (err, collection) {
+        function(db, cb) {
+            db.collection('lrc', function(err, collection) {
                 cb(err, collection);
             })
         },
-        function (collection, cb) {
-            collection.findOne({ _id: id }, function (err, lrc) {
+        function(collection, cb) {
+            collection.findOne({ _id: id }, function(err, lrc) {
                 console.log(err)
 
                 cb(err, lrc, collection);
             })
         },
-        function (lrc, collection, cb) {
+        function(lrc, collection, cb) {
             console.log('lrc', lrc)
             if (lrc) {
                 if (likeOrUnlike == 1) {
@@ -139,64 +150,64 @@ Lrc.like = function (id, likeOrUnlike, callback, userId) {
                     lrc.likes -= 1;
                 }
             }
-            collection.save(lrc, function (err) {
+            collection.save(lrc, function(err) {
                 cb(err, lrc);
             });
 
         }
-    ], function (err, lrc) {
+    ], function(err, lrc) {
         mongodb.close();
         return callback(err, lrc);
     });
 };
 
-Lrc.getAll = function (callback) {
+Lrc.getAll = function(callback) {
     async.waterfall([
-        function (cb) {
-            mongodb.open(function (err, db) {
+        function(cb) {
+            mongodb.open(function(err, db) {
                 cb(err, db);
             });
         },
-        function (db, cb) {
-            db.collection('lrc', function (err, collection) {
+        function(db, cb) {
+            db.collection('lrc', function(err, collection) {
                 cb(err, collection);
             });
         },
-        function (collection, cb) {
-            collection.find().toArray(function (err, lrcs) {
+        function(collection, cb) {
+            collection.find().toArray(function(err, lrcs) {
                 cb(err, lrcs);
             });
         }
-    ], function (err, lrcs) {
+    ], function(err, lrcs) {
         mongodb.close();
         return callback(err, lrcs);
     });
 };
 
-Lrc.comment = function (lrcId, content, userId, callback) {
+Lrc.comment = function(lrcId, content, userId, callback) {
     try {
         var id = new ObjectId(lrcId);
     } catch (err) {
         return callback(err);
     }
     async.waterfall([
-        function (cb) {
-            mongodb.open(function (err, db) {
+        function(cb) {
+            mongodb.open(function(err, db) {
                 cb(err, db);
             })
         },
-        function (db, cb) {
-            db.collection('lrc', function (err, collection) {
+        function(db, cb) {
+            db.collection('lrc', function(err, collection) {
                 cb(err, collection, db);
             })
         },
-        function (collection, db, cb) {
+        function(collection, db, cb) {
 
-            collection.findOne({ _id: id }, function (err, lrc) {
+            collection.findOne({ _id: id }, function(err, lrc) {
                 cb(err, lrc, collection, db);
             })
         },
-        function (lrc, collection, db, cb) {
+        function(lrc, collection, db, cb) {
             if (lrc) {
                 var comment = new Comment({
                     authorId: new ObjectId(userId),
@@ -205,15 +216,15 @@ Lrc.comment = function (lrcId, content, userId, callback) {
                     lrcId: id
                 });
 
-                comment.save(db, function (err, comment, CommentCollection) {
+                comment.save(db, function(err, comment, CommentCollection) {
                     if (err) {
                         cb(err);
                     } else {
                         lrc.comments.splice(0, 0, comment._id);
                         // 只返回comment
 
-                        collection.save(lrc, function (err) {
-                            CommentCollection.find({ '_id': { '$in': lrc['comments'] } }).toArray(function (err, result) {
+                        collection.save(lrc, function(err) {
+                            CommentCollection.find({ '_id': { '$in': lrc['comments'] } }).toArray(function(err, result) {
                                 console.log('result', result);
                                 cb(err, result);
                             });
@@ -224,37 +235,37 @@ Lrc.comment = function (lrcId, content, userId, callback) {
                 cb(null, lrc);
             }
         }
-    ], function (err, lrc) {
+    ], function(err, lrc) {
         mongodb.close();
         return callback(err, lrc);
     });
 };
 
-Lrc.deleteComment = function (lrcId, comment, callback) {
+Lrc.deleteComment = function(lrcId, comment, callback) {
     try {
         var id = new ObjectId(lrcId);
     } catch (err) {
         return callback(err);
     }
     async.waterfall([
-        function (cb) {
-            mongodb.open(function (err, db) {
+        function(cb) {
+            mongodb.open(function(err, db) {
                 cb(err, db);
             })
         },
-        function (db, cb) {
-            db.collection('lrc', function (err, collection) {
+        function(db, cb) {
+            db.collection('lrc', function(err, collection) {
                 cb(err, collection);
             })
         },
-        function (collection, cb) {
-            collection.findOne({ _id: id }, function (err, lrc) {
+        function(collection, cb) {
+            collection.findOne({ _id: id }, function(err, lrc) {
                 console.log(err)
 
                 cb(err, lrc, collection);
             })
         },
-        function (lrc, collection, cb) {
+        function(lrc, collection, cb) {
             console.log('lrc', lrc)
             if (lrc) {
                 comment = JSON.parse(comment);
@@ -266,7 +277,7 @@ Lrc.deleteComment = function (lrcId, comment, callback) {
                     lrc.comments.splice(index, 1);
                 }
 
-                collection.save(lrc, function (err) {
+                collection.save(lrc, function(err) {
                     cb(err, lrc);
                 });
             } else {
@@ -275,7 +286,7 @@ Lrc.deleteComment = function (lrcId, comment, callback) {
 
 
         }
-    ], function (err, lrc) {
+    ], function(err, lrc) {
         mongodb.close();
 
         return callback(err, lrc);
