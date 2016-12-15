@@ -1,11 +1,16 @@
 var router = require('express').Router();
 var Lrc = require('../models/lrc');
 var util = require('../util/index');
+
+router.get('/aaaa', function (req, res, next) {
+    res.send('aaa')
+});
+
 router.post('/write', function (req, res, next) {
     var title = req.body.title;
     var content = req.body.content;
     var bg = req.body.bg;
-    var author = req.session.user.name;
+    var author = req.session.user._id;
     var publishTime = new Date();
 
     var lrc = new Lrc({
@@ -20,9 +25,9 @@ router.post('/write', function (req, res, next) {
         if (err) {
             return next(err);
         };
-        res.json({ lrc: lrc.ops[0] });
+        res.json({ lrc: lrc });
     });
-})
+});
 
 router.post('/like/:id', function (req, res, next) {
     var user = req.session.user;
@@ -88,7 +93,7 @@ router.post('/comment', function (req, res, next) {
     var lrcId = req.body.lrcId;
     var content = req.body.content;
     var userId = user._id;
-
+    console.log('req.body', req.body)
     Lrc.comment(lrcId, content, userId, function (err, lrc) {
 
         if (err) {

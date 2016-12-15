@@ -2,6 +2,22 @@ var mongodb = require('./db');
 var async = require('async');
 var ObjectId = require('mongodb').ObjectId;
 var Comment = require('./comment');
+var mongoose = require('mongoose');
+// mongoose.connect('mongodb://localhost/lrc');
+
+var lrcSchema = new mongoose.Schema({
+    title: String,
+    content: String,
+    bg: String,
+    author: mongoose.Schema.ObjectId,
+    publishTime: Date,
+    views: Number,
+    likes: Number,
+    likeIds: Array,
+    collects: Number,
+    comments: Array,
+});
+var lrcModel = mongoose.model('Lrc', lrcSchema);
 
 function Lrc(lrc) {
     this.title = lrc.title;
@@ -18,26 +34,13 @@ function Lrc(lrc) {
 
 Lrc.prototype.save = function (callback) {
     var lrc = this;
-    async.waterfall([
-        function (cb) {
-            mongodb.open(function (err, db) {
-                cb(err, db);
-            })
-        },
-        function (db, cb) {
-            db.collection('lrc', function (err, collection) {
-                cb(err, collection);
-            })
-        },
-        function (collection, cb) {
-            collection.insert(lrc, { safe: true }, function (err, lrc) {
-                cb(err, lrc);
-            })
+    var newLrc = lrcModel(lrc);
+    newLrc.save(function (err, lrc) {
+        if (err) {
+            return callback(err);
         }
-    ], function (err, lrc) {
-        mongodb.close();
-        callback(err, lrc);
-    })
+        callback(null, lrc);
+    });
 };
 
 Lrc.get = function (id, callback) {
@@ -205,67 +208,92 @@ Lrc.getAll = function (callback) {
 };
 
 Lrc.comment = function (lrcId, content, userId, callback) {
-    try {
-        var id = new ObjectId(lrcId);
-    } catch (err) {
-        return callback(err);
-    }
-    async.waterfall([
-        function (cb) {
-            mongodb.open(function (err, db) {
-                cb(err, db);
-            })
-        },
-        function (db, cb) {
-            db.collection('lrc', function (err, collection) {
-                cb(err, collection, db);
-            })
-        },
-        function (collection, db, cb) {
+    // try {
+    //     var id = new ObjectId(lrcId);
+    // } catch (err) {
+    //     return callback(err);
+    // }
 
-            collection.findOne({ _id: id }, function (err, lrc) {
-                cb(err, lrc, collection, db);
-            })
-        },
-        function (lrc, collection, db, cb) {
-            if (lrc) {
-                var commentId = ObjectId();
-                var comment = {
-                    _id: new ObjectId(),
-                    authorId: new ObjectId(userId),
-                    content: content,
-                    commentTime: new Date(),
-                    lrcId: id
-                };
-                console.log('comment', comment)
-                    // comment.save(db, function (err, comment, CommentCollection) {
-                    //     if (err) {
-                    //         cb(err);
-                    //     } else {
-                    //         console.log('lrc', lrc);
-                    //         // lrc.comments.splice(0, 0, comment._id);
-                    //         // 只返回comment
+    console.log('id', lrcId);
+    lrcModel.find({}, function (err, lrc) {
+        console.log('lrcs', lrc);
+    })
 
-                //         collection.save(lrc, function (err) {
-                //             CommentCollection.find({ '_id': { '$in': lrc['comments'] } }).toArray(function (err, result) {
-                //                 console.log('result', result);
-                //                 cb(err, result);
-                //             });
-                //         });
-                //     }
-                // });
-                lrc.comments.splice(0, 0, comment);
-                collection.save(lrc, function (err, lrc) {
-                    cb(err, lrc);
-                });
-            } else {
-                cb(null, lrc);
+    lrcModel.findById(lrcId, function (err, lrc) {
+
+        var commentId = ObjectId();
+        var comment = {
+            _id: new ObjectId(),
+            authorId: new ObjectId(userId),
+            content: content,
+            commentTime: new Date(),
+            lrcId: lrcId
+        };
+        console.log('lrc', lrc)
+        lrc.comments.splice(0, 0, comment);
+        lrc.save(function (err, lrc) {
+            if (err) {
+                return callback(err);
+
             }
-        }
-    ], function (err, lrc) {
-        mongodb.close();
-        return callback(err, lrc);
+            callback(err, lrc);
+        });
     });
+    // async.waterfall([
+    //     function (cb) {
+    //         mongodb.open(function (err, db) {
+    //             cb(err, db);
+    //         })
+    //     },
+    //     function (db, cb) {
+    //         db.collection('lrc', function (err, collection) {
+    //             cb(err, collection, db);
+    //         })
+    //     },
+    //     function (collection, db, cb) {
+
+    //         collection.findOne({ _id: id }, function (err, lrc) {
+    //             cb(err, lrc, collection, db);
+    //         })
+    //     },
+    //     function (lrc, collection, db, cb) {
+    //         if (lrc) {
+    //             var commentId = ObjectId();
+    //             var comment = {
+    //                 _id: new ObjectId(),
+    //                 authorId: new ObjectId(userId),
+    //                 content: content,
+    //                 commentTime: new Date(),
+    //                 lrcId: id
+    //             };
+    //             console.log('comment', comment)
+    //                 // comment.save(db, function (err, comment, CommentCollection) {
+    //                 //     if (err) {
+    //                 //         cb(err);
+    //                 //     } else {
+    //                 //         console.log('lrc', lrc);
+    //                 //         // lrc.comments.splice(0, 0, comment._id);
+    //                 //         // 只返回comment
+
+    //             //         collection.save(lrc, function (err) {
+    //             //             CommentCollection.find({ '_id': { '$in': lrc['comments'] } }).toArray(function (err, result) {
+    //             //                 console.log('result', result);
+    //             //                 cb(err, result);
+    //             //             });
+    //             //         });
+    //             //     }
+    //             // });
+    //             lrc.comments.splice(0, 0, comment);
+    //             collection.save(lrc, function (err, lrc) {
+    //                 cb(err, lrc);
+    //             });
+    //         } else {
+    //             cb(null, lrc);
+    //         }
+    //     }
+    // ], function (err, lrc) {
+    //     mongodb.close();
+    //     return callback(err, lrc);
 };
 
 Lrc.deleteComment = function (lrcId, comment, callback) {

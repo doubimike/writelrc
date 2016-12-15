@@ -4,7 +4,7 @@ var crypto = require('crypto');
 var User = require('../models/user');
 
 var util = require('../util');
-router.post('/reg', function(req, res, next) {
+router.post('/reg', function (req, res, next) {
     var name = req.body.name;
     var password = req.body.password;
     var email = req.body.email;
@@ -17,8 +17,7 @@ router.post('/reg', function(req, res, next) {
         email: email
     });
 
-
-    User.get(newUser.name, newUser.email, function(err, user, userEmail) {
+    User.get(newUser.name, newUser.email, function (err, user, userEmail) {
         if (err) {
             return next(err);
         }
@@ -28,63 +27,57 @@ router.post('/reg', function(req, res, next) {
         if (userEmail) {
             return next(util.createApiError(40002, '邮箱已注册'));
         }
-        newUser.save(function(err, user) {
+        newUser.save(function (err, user) {
             if (err) {
                 return res.next(err);
             }
-            req.session.user = user.ops[0];
-
-            res.apiSuccess({ name: user.ops[0].name, email: user.ops[0].email, head: user.ops[0].head, _id: user.ops[0]._id });
+            req.session.user = user;
+            res.apiSuccess({ name: user.name, email: user.email, head: user.head, _id: user._id });
         });
     });
 });
 
-router.post('/log', function(req, res, next) {
+router.post('/log', function (req, res, next) {
     var password = req.body.password;
     var email = req.body.email;
     var md5 = crypto.createHash('md5');
     password = md5.update(req.body.password).digest('hex');
 
-    User.login(email, password, function(err, user) {
+    User.login(email, password, function (err, user) {
         if (err) {
             return next(err);
         }
         req.session.user = user;
-        console.log('user', user)
         res.apiSuccess({
             name: user.name,
             email: user.email,
             head: user.head,
             _id: user._id
         });
-
-
     });
 });
 
-router.get('/logout', function(req, res, next) {
-    console.log('req.session.user', req.session.user);
+router.get('/logout', function (req, res, next) {
     if (req.session.user) {
         delete req.session.user;
-        console.log('req.session.user after delete', req.session.user);
     }
     res.apiSuccess({ 'msg': 'OK' });
 });
 
-router.post('/forgotPass', function(req, res, next) {
+router.post('/forgotPass', function (req, res, next) {
     var email = req.body.email;
     // 接下来应该是发送一封邮件
-    sendEmail(email).then(function() {
+    sendEmail(email).then(function () {
         res.apiSuccess({ 'msg': '发送成功' });
-    }, function(data) {
+    }, function (data) {
         console.log(data);
     });
-})
+});
 
 
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/', function (req, res, next) {
     res.sendFile('../client/app/index.html');
 });
 
