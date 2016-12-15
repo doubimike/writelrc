@@ -14,6 +14,8 @@ var userSchema = new mongoose.Schema({
 });
 
 var userModel = mongoose.model('User', userSchema);
+User.userModel = userModel;
+
 
 function User(user) {
     this.name = user.name;
@@ -21,7 +23,7 @@ function User(user) {
     this.email = user.email;
 }
 
-User.prototype.save = function (callback) {
+User.prototype.save = function(callback) {
     var md5 = crypto.createHash('md5');
     var email_MD5 = md5.update(this.email.toLowerCase()).digest('hex');
     var head = 'http://www.gravatar.com/avatar/' + email_MD5 + '?s=48';
@@ -32,7 +34,7 @@ User.prototype.save = function (callback) {
         head: head
     };
     var newUser = new userModel(user);
-    newUser.save(function (err, user) {
+    newUser.save(function(err, user) {
         if (err) {
             return callback(err);
         }
@@ -40,12 +42,12 @@ User.prototype.save = function (callback) {
     });
 };
 
-User.get = function (name, email, callback) {
-    userModel.findOne({ name: name }, function (err, user) {
+User.get = function(name, email, callback) {
+    userModel.findOne({ name: name }, function(err, user) {
         if (err) {
             return callback(err);
         }
-        userModel.findOne({ email: email }, function (err, userEmail) {
+        userModel.findOne({ email: email }, function(err, userEmail) {
             if (err) {
                 return callback(err);
             }
@@ -54,8 +56,8 @@ User.get = function (name, email, callback) {
     });
 };
 
-User.login = function (email, password, callback) {
-    userModel.findOne({ email: email }, function (err, userEmail) {
+User.login = function(email, password, callback) {
+    userModel.findOne({ email: email }, function(err, userEmail) {
         if (err) {
             return callback(err);
         }

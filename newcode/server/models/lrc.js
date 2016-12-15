@@ -3,6 +3,7 @@ var async = require('async');
 var ObjectId = require('mongodb').ObjectId;
 var Comment = require('./comment');
 var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
 // mongoose.connect('mongodb://localhost/lrc');
 
 var lrcSchema = new mongoose.Schema({
@@ -15,9 +16,11 @@ var lrcSchema = new mongoose.Schema({
     likes: Number,
     likeIds: Array,
     collects: Number,
-    comments: Array,
+    comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }]
 });
+
 var lrcModel = mongoose.model('Lrc', lrcSchema);
+Lrc.lrcModel = lrcModel;
 
 function Lrc(lrc) {
     this.title = lrc.title;
@@ -32,10 +35,10 @@ function Lrc(lrc) {
     this.comments = [];
 }
 
-Lrc.prototype.save = function (callback) {
+Lrc.prototype.save = function(callback) {
     var lrc = this;
     var newLrc = lrcModel(lrc);
-    newLrc.save(function (err, lrc) {
+    newLrc.save(function(err, lrc) {
         if (err) {
             return callback(err);
         }
@@ -43,122 +46,130 @@ Lrc.prototype.save = function (callback) {
     });
 };
 
-Lrc.get = function (id, callback) {
+Lrc.get = function(id, callback) {
     try {
         var id = new ObjectId(id);
     } catch (err) {
         return callback(err);
     }
-    async.waterfall([
-            function (cb) {
-                mongodb.open(function (err, db) {
-                    cb(err, db);
-                })
-            },
-            function (db, cb) {
-                db.collection('lrc', function (err, collection) {
-                    cb(err, collection);
-                })
-            },
-            function (collection, cb) {
-                // collection.aggregate([{
-                //         $match: { _id: id }
-                //     }, {
-                //         $lookup: {
-                //             from: 'comment',
-                //             localField: '_id',
-                //             foreignField: 'lrcId',
-                //             as: 'comments'
-                //         }
-                //     }, {
-                //         $unwind: '$comments'
-                //     }, {
-                //         $lookup: {
-                //             from: 'user',
-                //             localField: 'comments.authorId',
-                //             foreignField: '_id',
-                //             as: 'authorInfo'
-                //         }
-                //     }
 
-                // , {
-                //                 $lookup: {
-                //                     from: 'user',
-                //                     localField: 'comments.authorId',
-                //                     foreignField: '_id',
-                //                     as: 'comments'
-                //                 }
-                //             }
+    lrcModel.findById(id, function(err, lrc) {
+        if (err) {
+            return callback(err)
+        };
+        return callback(err, lrc);
+    })
 
-                // ],
-                // 
-                // 
+    // async.waterfall([
+    //         function (cb) {
+    //             mongodb.open(function (err, db) {
+    //                 cb(err, db);
+    //             })
+    //         },
+    //         function (db, cb) {
+    //             db.collection('lrc', function (err, collection) {
+    //                 cb(err, collection);
+    //             })
+    //         },
+    //         function (collection, cb) {
+    //             // collection.aggregate([{
+    //             //         $match: { _id: id }
+    //             //     }, {
+    //             //         $lookup: {
+    //             //             from: 'comment',
+    //             //             localField: '_id',
+    //             //             foreignField: 'lrcId',
+    //             //             as: 'comments'
+    //             //         }
+    //             //     }, {
+    //             //         $unwind: '$comments'
+    //             //     }, {
+    //             //         $lookup: {
+    //             //             from: 'user',
+    //             //             localField: 'comments.authorId',
+    //             //             foreignField: '_id',
+    //             //             as: 'authorInfo'
+    //             //         }
+    //             //     }
+
+    //             // , {
+    //             //                 $lookup: {
+    //             //                     from: 'user',
+    //             //                     localField: 'comments.authorId',
+    //             //                     foreignField: '_id',
+    //             //                     as: 'comments'
+    //             //                 }
+    //             //             }
+
+    //             // ],
+    //             // 
+    //             // 
 
 
-                collection.aggregate([{
-                    $match: { _id: id }
-                }, {
-                    $lookup: {
-                        from: 'users',
-                        localField: '_id',
-                        foreignField: 'lrcId',
-                        as: 'comments'
-                    }
-                }, ]);
-                // collection.findOne({ _id: id }, function (err, lrc) {
-                //     cb(err, lrc, collection)
-                // })
+    //             collection.aggregate([{
+    //                 $match: { _id: id }
+    //             }, {
+    //                 $lookup: {
+    //                     from: 'users',
+    //                     localField: '_id',
+    //                     foreignField: 'lrcId',
+    //                     as: 'comments'
+    //                 }
+    //             }, ]);
+    //             // collection.findOne({ _id: id }, function (err, lrc) {
+    //             //     cb(err, lrc, collection)
+    //             // })
 
-                // function (err, lrc) {
-                //     console.log('err aggregate', err)
-                //     console.log('lrc', lrc)
-                //     cb(err, lrc[0], collection);
-                // });
+    //             // function (err, lrc) {
+    //             //     console.log('err aggregate', err)
+    //             //     console.log('lrc', lrc)
+    //             //     cb(err, lrc[0], collection);
+    //             // });
 
-                // collection.findOne({ _id: id }, function (err, lrc) {
-                //     console.log(err)
-                //     cb(err, lrc, collection);
-                // })
-            },
-            function (lrc, collection, cb) {
-                lrc.views += 1;
-                collection.save(lrc, function (err) {
-                    cb(err, lrc);
-                });
-            }
-        ],
-        function (err, lrc) {
-            mongodb.close();
-            return callback(err, lrc);
-        });
+    //             // collection.findOne({ _id: id }, function (err, lrc) {
+    //             //     console.log(err)
+    //             //     cb(err, lrc, collection);
+    //             // })
+    //         },
+    //         function (lrc, collection, cb) {
+    //             lrc.views += 1;
+    //             collection.save(lrc, function (err) {
+    //                 cb(err, lrc);
+    //             });
+    //         }
+    //     ],
+    //     function (err, lrc) {
+    //         mongodb.close();
+    //         return callback(err, lrc);
+    //     });
 }
 
 
-Lrc.like = function (id, likeOrUnlike, callback, userId) {
+Lrc.like = function(id, likeOrUnlike, callback, userId) {
     try {
         var id = new ObjectId(id);
     } catch (err) {
         return callback(err);
     }
     async.waterfall([
-        function (cb) {
-            mongodb.open(function (err, db) {
+        function(cb) {
+            mongodb.open(function(err, db) {
                 cb(err, db);
             })
         },
-        function (db, cb) {
-            db.collection('lrc', function (err, collection) {
+        function(db, cb) {
+            db.collection('lrc', function(err, collection) {
                 cb(err, collection);
             })
         },
-        function (collection, cb) {
-            collection.findOne({ _id: id }, function (err, lrc) {
+        function(collection, cb) {
+            collection.findOne({ _id: id }, function(err, lrc) {
                 console.log(err)
 
                 cb(err, lrc, collection);
             })
         },
-        function (lrc, collection, cb) {
+        function(lrc, collection, cb) {
             console.log('lrc', lrc)
             if (lrc) {
                 if (likeOrUnlike == 1) {
@@ -173,154 +184,97 @@ Lrc.like = function (id, likeOrUnlike, callback, userId) {
                     lrc.likes -= 1;
                 }
             }
-            collection.save(lrc, function (err) {
+            collection.save(lrc, function(err) {
                 cb(err, lrc);
             });
 
         }
-    ], function (err, lrc) {
+    ], function(err, lrc) {
         mongodb.close();
         return callback(err, lrc);
     });
 };
 
-Lrc.getAll = function (callback) {
+Lrc.getAll = function(callback) {
     async.waterfall([
-        function (cb) {
-            mongodb.open(function (err, db) {
+        function(cb) {
+            mongodb.open(function(err, db) {
                 cb(err, db);
             });
         },
-        function (db, cb) {
-            db.collection('lrc', function (err, collection) {
+        function(db, cb) {
+            db.collection('lrc', function(err, collection) {
                 cb(err, collection);
             });
         },
-        function (collection, cb) {
-            collection.find().toArray(function (err, lrcs) {
+        function(collection, cb) {
+            collection.find().toArray(function(err, lrcs) {
                 cb(err, lrcs);
             });
         }
-    ], function (err, lrcs) {
+    ], function(err, lrcs) {
         mongodb.close();
         return callback(err, lrcs);
     });
 };
 
-Lrc.comment = function (lrcId, content, userId, callback) {
-    // try {
-    //     var id = new ObjectId(lrcId);
-    // } catch (err) {
-    //     return callback(err);
-    // }
+Lrc.comment = function(lrcId, content, userId, callback) {
+    lrcModel.findById(lrcId, function(err, lrc) {
 
-    console.log('id', lrcId);
-    lrcModel.find({}, function (err, lrc) {
-        console.log('lrcs', lrc);
-    })
-
-    lrcModel.findById(lrcId, function (err, lrc) {
-
-        var commentId = ObjectId();
-        var comment = {
-            _id: new ObjectId(),
-            authorId: new ObjectId(userId),
+        if (err) {
+            return callback(err);
+        }
+        var comment = new Comment({
+            authorId: userId,
             content: content,
             commentTime: new Date(),
             lrcId: lrcId
-        };
-        console.log('lrc', lrc)
-        lrc.comments.splice(0, 0, comment);
-        lrc.save(function (err, lrc) {
+        });
+
+        comment.save(function(err, comment) {
             if (err) {
                 return callback(err);
 
             }
-            callback(err, lrc);
+            console.log(comment);
+            // lrc.comments.push(comment._id);
+            console.log('lrc', lrc);
+            lrc.save(function(err, lrc) {
+                console.log('lrc', lrc)
+                if (err) {
+                    return callback(err);
+                }
+                callback(err, lrc);
+            })
         });
     });
-    // async.waterfall([
-    //     function (cb) {
-    //         mongodb.open(function (err, db) {
-    //             cb(err, db);
-    //         })
-    //     },
-    //     function (db, cb) {
-    //         db.collection('lrc', function (err, collection) {
-    //             cb(err, collection, db);
-    //         })
-    //     },
-    //     function (collection, db, cb) {
-
-    //         collection.findOne({ _id: id }, function (err, lrc) {
-    //             cb(err, lrc, collection, db);
-    //         })
-    //     },
-    //     function (lrc, collection, db, cb) {
-    //         if (lrc) {
-    //             var commentId = ObjectId();
-    //             var comment = {
-    //                 _id: new ObjectId(),
-    //                 authorId: new ObjectId(userId),
-    //                 content: content,
-    //                 commentTime: new Date(),
-    //                 lrcId: id
-    //             };
-    //             console.log('comment', comment)
-    //                 // comment.save(db, function (err, comment, CommentCollection) {
-    //                 //     if (err) {
-    //                 //         cb(err);
-    //                 //     } else {
-    //                 //         console.log('lrc', lrc);
-    //                 //         // lrc.comments.splice(0, 0, comment._id);
-    //                 //         // 只返回comment
-
-    //             //         collection.save(lrc, function (err) {
-    //             //             CommentCollection.find({ '_id': { '$in': lrc['comments'] } }).toArray(function (err, result) {
-    //             //                 console.log('result', result);
-    //             //                 cb(err, result);
-    //             //             });
-    //             //         });
-    //             //     }
-    //             // });
-    //             lrc.comments.splice(0, 0, comment);
-    //             collection.save(lrc, function (err, lrc) {
-    //                 cb(err, lrc);
-    //             });
-    //         } else {
-    //             cb(null, lrc);
-    //         }
-    //     }
-    // ], function (err, lrc) {
-    //     mongodb.close();
-    //     return callback(err, lrc);
 };
 
-Lrc.deleteComment = function (lrcId, comment, callback) {
+Lrc.deleteComment = function(lrcId, comment, callback) {
     try {
         var id = new ObjectId(lrcId);
     } catch (err) {
         return callback(err);
     }
     async.waterfall([
-        function (cb) {
-            mongodb.open(function (err, db) {
+        function(cb) {
+            mongodb.open(function(err, db) {
                 cb(err, db);
             })
         },
-        function (db, cb) {
-            db.collection('lrc', function (err, collection) {
+        function(db, cb) {
+            db.collection('lrc', function(err, collection) {
                 cb(err, collection);
             })
         },
-        function (collection, cb) {
-            collection.findOne({ _id: id }, function (err, lrc) {
+        function(collection, cb) {
+            collection.findOne({ _id: id }, function(err, lrc) {
                 console.log(err)
 
                 cb(err, lrc, collection);
             })
         },
-        function (lrc, collection, cb) {
+        function(lrc, collection, cb) {
             console.log('lrc', lrc)
             if (lrc) {
                 comment = JSON.parse(comment);
@@ -332,7 +286,7 @@ Lrc.deleteComment = function (lrcId, comment, callback) {
                     lrc.comments.splice(index, 1);
                 }
 
-                collection.save(lrc, function (err) {
+                collection.save(lrc, function(err) {
                     cb(err, lrc);
                 });
             } else {
@@ -341,7 +295,7 @@ Lrc.deleteComment = function (lrcId, comment, callback) {
 
 
         }
-    ], function (err, lrc) {
+    ], function(err, lrc) {
         mongodb.close();
 
         return callback(err, lrc);
