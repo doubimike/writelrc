@@ -21,12 +21,19 @@ angular.module('clientApp')
         vm.deleteComment = deleteComment;
         init();
         $scope.$on('commentsChangeFound', function (event, msg) {
-            vm.lrc.comments = msg;
-        })
+            vm.lrc.comments.splice(0, 0, msg);
+        });
+        $scope.$on('commentsDelFound', function (event, msg) {
+            vm.lrc.comments.splice(msg, 1);
+        });
         $rootScope.$on('commentsChange', function (event, msg) {
             $rootScope.$broadcast('commentsChangeFound', msg);
 
-        })
+        });
+        $rootScope.$on('commentsDel', function (event, msg) {
+            $rootScope.$broadcast('commentsDelFound', msg);
+
+        });
 
         function init() {
             $http.get('/lrc/detail/' + id).then(function (res) {
@@ -122,14 +129,14 @@ angular.module('clientApp')
             }
         }
 
-        function deleteComment(ev, comment) {
+        function deleteComment(ev, comment, $index) {
             var confirm = $mdDialog.confirm().title('确定要删除此条评论么？')
                 .ok('确定')
                 .cancel('取消');
             $mdDialog.show(confirm).then(function () {
                 $http.delete('/lrc/comment', { params: { lrcId: id, comment: comment } }).then(function (res) {
                     if (res.data.status == 'OK') {
-                        $scope.$emit('commentsChange', res.data.result)
+                        $scope.$emit('commentsDel', $index);
                     }
                 }, function (res) {
                     console.log(res);

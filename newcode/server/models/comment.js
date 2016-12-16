@@ -7,8 +7,8 @@ var Lrc = require('./lrc').lrcModel;
 
 var commentSchema = Schema({
     authorId: { type: Schema.Types.ObjectId, ref: 'User' },
-    content: String,
-    commentTime: Date,
+    content: { type: String, require: true },
+    commentTime: { type: Date, default: Date.now },
     lrcId: { type: Schema.Types.ObjectId, ref: 'Lrc' },
 });
 

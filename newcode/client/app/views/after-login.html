@@ -12,7 +12,8 @@
                                         <md-card-title>
                                             <md-card-title-text>
                                                 <span class="md-headline">{{lrc.title}}</span>
-                                                <span class="md-subhead">{{lrc.author}}<span></span>{{lrc.publishTime}}</span>
+                                                <span class="md-subhead"><img ng-src="{{lrc.author.head}}" alt="avatar">{{lrc.author.name}}</span>
+                                                <time title="{{ lrc.publishTime | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}">{{ lrc.publishTime | amCalendar }}</time>
                                             </md-card-title-text>
                                         </md-card-title>
                                         <md-card-content>
@@ -63,21 +64,17 @@
             </md-content>
         </div>
         <span flex></span>
-        <div flex="20">
+        <div flex="20" ng-if="$root.globals.user">
             <md-button class="md-fab" aria-label="create" ui-sref="write">
                 <md-icon> create </md-icon>
             </md-button>
             <span>写下自己的歌词</span>
             <md-list flex>
                 <md-subheader class="md-no-sticky">我的歌词 <a href="">More...</a></md-subheader>
-                <md-list-item class="md-3-line" ng-click="null">
+                <md-list-item class="md-3-line" ng-repeat="item in vm.lrcs" ui-sref="detail({lrcID: item._id})">
                     <div class="md-list-item-text" layout="column">
-                        <p>简单爱</p>
-                    </div>
-                </md-list-item>
-                <md-list-item class="md-3-line" ng-click="null">
-                    <div class="md-list-item-text" layout="column">
-                        <p>我和我</p>
+                        <p>{{item.title}}</p>
+                        <p>{{item._id}}</p>
                     </div>
                 </md-list-item>
             </md-list>

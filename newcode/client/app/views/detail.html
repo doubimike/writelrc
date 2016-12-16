@@ -9,10 +9,10 @@
     </md-card-content>
     <md-card-footer>
         <md-card-avatar>
-            <img class="md-user-avatar" src="https://material.angularjs.org/latest/img/icons/angular-logo.svg" width="24" height="24" />{{vm.lrc.author}}
+            <img class="md-user-avatar" ng-src="{{vm.lrc.author.head}}" width="24" height="24" />{{vm.lrc.author.name}}
         </md-card-avatar>
         <span>
-          {{vm.lrc.publishTime}} 夜 于成都
+          <time title="{{ vm.lrc.publishTime | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}">{{ vm.lrc.publishTime | amCalendar }}</time> 夜 <span ng-show="vm.lrc.pubPlace">于{{vm.lrc.pubPlace}}</span>
         </span>
         <div>
             <span>赞</span>
@@ -46,17 +46,19 @@
         <md-list class="md-dense">
             <md-subheader class="md-no-sticky">词评</md-subheader>
             <md-list-item class="md-3-line" ng-repeat="item in vm.lrc.comments">
-                <img ng-src="" class="md-avatar" alt="{{item.name}}">
+                <img ng-src="{{item.authorId.head}}" class="md-avatar" alt="{{item.name}}">
                 <div class="md-list-item-text" layout="column">
-                    <h3>{{item.authorName}}</h3>
                     <h3>{{item.content}}</h3>
-                    <p>{{item.commentTime}}</p>
+                    <h3>{{item.authorId.name}}</h3>
+                    <p>
+                        <time title="{{ item.commentTime | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}">{{ item.commentTime | amCalendar }}</time>
+                    </p>
                 </div>
                 <div>
-                    <md-button ng-click="vm.replyComment($event,item.authorName)">
+                    <md-button ng-click="vm.replyComment($event,item.authorId.name)">
                         <md-icon> comment </md-icon>
                     </md-button>
-                    <md-button ng-click="vm.deleteComment($event,item)" ng-show="$root.globals.user.name==item.authorName">
+                    <md-button ng-click="vm.deleteComment($event,item,$index)" ng-show="$root.globals.user.name==item.authorId.name">
                         <md-icon> delete </md-icon>
                     </md-button>
                 </div>

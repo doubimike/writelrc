@@ -8,45 +8,41 @@
  * Controller of the clientApp
  */
 angular.module('clientApp')
-    .controller('AfterLoginCtrl', function($http) {
+    .controller('AfterLoginCtrl', function ($http, $rootScope) {
         var vm = this;
         vm.lrcList = [];
+        vm.lrcs = [];
 
-
-        $http.get('/lrc/all').then(function(res) {
+        $http.get('/lrc/all').then(function (res) {
             console.log(res)
             vm.lrcList = res.data.lrcList;
-        }, function(res) {
+        }, function (res) {
             alert('失败，请重试。具体信息：' + JSON.stringify(res));
         })
-        vm.loadMore = function() {
-            $http.get('/lrc/all').then(function(res) {
+        vm.loadMore = function () {
+
+            $http.get('/lrc/all').then(function (res) {
                 console.log(res);
 
                 vm.lrcList = res.data;
-            }, function(res) {
+            }, function (res) {
                 alert('失败，请重试。具体信息：' + JSON.stringify(res));
             })
         }
+        if (!$rootScope.globals.user) {
+            // return $state.go('login');
+        } else {
+            loadMine();
+        }
 
-        vm.lrcs = [{
-            title: '简单爱',
-            author: '周杰伦',
-            publishTime: '20161208',
-            likes: 200,
-            comments: 100,
-            donate: 100,
-            reads: 1000,
-            collects: 1000,
-            content: '内心的深处，我不满足于做一个仅仅是听歌的文艺青年！'
-        }, {
-            title: '简单爱',
-            author: '周杰伦',
-            publishTime: '20161208',
-            likes: 200,
-            comments: 100,
-            reads: 1000,
-            donate: 100,
-            content: '内心的深处，我不满足于做一个仅仅是听歌的文艺青年！内心的深处，我不满足于做一个仅仅是听歌的文艺青年！内心的深处，我不满足于做一个仅仅是听歌的文艺青年！内心的深处，我不满足于做一个仅仅是听歌的文艺青年！内心的深处，我不满足于做一个仅仅是听歌的文艺青年！内心的深处，我不满足于做一个仅仅是听歌的文艺青年！内心的深处，我不满足于做一个仅仅是听歌的文艺青年！内心的深处，我不满足于做一个仅仅是听歌的文艺青年！内心的深处，我不满足于做一个仅仅是听歌的文艺青年！内心的深处，我不满足于做一个仅仅是听歌的文艺青年！内心的深处，我不满足于做一个仅仅是听歌的文艺青年！内心的深处，我不满足于做一个仅仅是听歌的文艺青年！内心的深处，我不满足于做一个仅仅是听歌的文艺青年！内心的深处，我不满足于做一个仅仅是听歌的文艺青年！'
-        }];
+        function loadMine() {
+            $http.get('/lrc/mine').then(function (res) {
+                console.log(res);
+
+                vm.lrcs = res.data.result.lrcs;
+                console.log('vm.lrcs', vm.lrcs)
+            }, function (res) {
+                alert('失败，请重试。具体信息：' + JSON.stringify(res));
+            });
+        };
     });

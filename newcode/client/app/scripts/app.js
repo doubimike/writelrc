@@ -18,11 +18,12 @@ angular
         'ngSanitize',
         // 'ngTouch',
         'ngMaterial',
-        'ui.router'
+        'ui.router',
+        'angularMoment'
     ])
-    .factory('errorHandlerInterceptor', function() {
+    .factory('errorHandlerInterceptor', function () {
         var errorHandlerInterceptor = {
-            response: function(response) {
+            response: function (response) {
                 if (response.data.status == 'Error') {
                     alert(response.data.error_message);
                 }
@@ -31,11 +32,11 @@ angular
         }
         return errorHandlerInterceptor;
     })
-    .config(function($stateProvider, $urlRouterProvider, $mdThemingProvider, $qProvider, $httpProvider) {
+    .config(function ($stateProvider, $urlRouterProvider, $mdThemingProvider, $qProvider, $httpProvider) {
         $httpProvider.interceptors.push('errorHandlerInterceptor');
 
 
-        // $qProvider.errorOnUnhandledRejections(false);
+        $qProvider.errorOnUnhandledRejections(false);
 
         var customBlueMap = $mdThemingProvider.extendPalette('light-blue', {
             'contrastDefaultColor': 'light',
@@ -118,12 +119,13 @@ angular
                 url: '/test',
                 templateUrl: 'views/test.html',
                 controller: 'TestCtrl',
-                controllerAs: 'ctrl'
+                controllerAs: 'vm'
             });
     })
-    .run(function($rootScope, $cookieStore, $location) {
+    .run(function ($rootScope, $cookieStore, $location, amMoment) {
+        amMoment.changeLocale('zh-hk');
         $rootScope.globals = $cookieStore.get('globals') || {};
-        $rootScope.$on('$locationChangeStart', function(event, next, current) {
+        $rootScope.$on('$locationChangeStart', function (event, next, current) {
             var path = $location.path();
             var restrictedPage = (path === '/test');
             var loggedIn = $rootScope.globals.user;
@@ -137,18 +139,18 @@ angular
             }
 
         });
-    }).controller('LogoutCtrl', function($http, $rootScope, $cookieStore, $state) {
+    }).controller('LogoutCtrl', function ($http, $rootScope, $cookieStore, $state) {
         var vm = this;
         vm.logout = logout;
 
         function logout() {
-            $http.get('/logout').then(function(data) {
+            $http.get('/logout').then(function (data) {
                 if (data.status == 200) {
                     $rootScope.globals = {};
                     $cookieStore.remove('globals');
                     $state.go('main');
                 }
-            }, function(data) {
+            }, function (data) {
                 console.log(data);
             });
         }
@@ -157,7 +159,7 @@ angular
         vm._mdPanel = $mdPanel;
         var panelRef;
 
-        GeneralCtrl.prototype.showMenu = function(ev) {
+        GeneralCtrl.prototype.showMenu = function (ev) {
             var position = vm._mdPanel.newPanelPosition()
                 .relativeTo('.menu')
                 .addPanelPosition(vm._mdPanel.xPosition.CENTER, vm._mdPanel.yPosition.BELOW);
@@ -174,7 +176,7 @@ angular
                 zIndex: 2
             };
 
-            vm._mdPanel.open(config).then(function(result) {
+            vm._mdPanel.open(config).then(function (result) {
                 panelRef = result;
             });
 
@@ -184,17 +186,17 @@ angular
             this._mdPanelRef = mdPanelRef;
         }
 
-        PanelMenuCtrl.prototype.closeMenu = function() {
+        PanelMenuCtrl.prototype.closeMenu = function () {
             var panelRef = this._mdPanelRef;
-            panelRef && panelRef.close().then(function() {
+            panelRef && panelRef.close().then(function () {
                 panelRef.destroy();
             });
         }
 
-        GeneralCtrl.prototype.closeMenu = function() {
+        GeneralCtrl.prototype.closeMenu = function () {
             console.log('closeMenu')
             console.log(panelRef)
-            panelRef && panelRef.close().then(function() {
+            panelRef && panelRef.close().then(function () {
                 // angular.element(document.querySelector('.menu')).focus();
                 panelRef.destroy();
             });
