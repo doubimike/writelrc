@@ -37,12 +37,12 @@
             <md-button class="md-icon-button" aria-label="Comment" ng-click="vm.addComment($event)">
                 <md-icon>comment</md-icon>
             </md-button>
-            <md-button class="md-icon-button" aria-label="Share">
+            <md-button class="md-icon-button" aria-label="Share" ng-click="vm.share()">
                 <md-icon>share</md-icon>
             </md-button>
-            <md-button class="md-icon-button" aria-label="Share">
+            <!--   <md-button class="md-icon-button" aria-label="Share">
                 <md-icon> attach_money </md-icon>
-            </md-button>
+            </md-button> -->
             <md-button ng-click="vm.collect(vm.lrc._id)"> <span ng-show="!vm.collectByUser">收藏</span><span ng-show="vm.collectByUser">取消收藏</span></md-button>
             <md-button ng-show="$root.globals.user._id==vm.lrc.author._id" ng-click="vm.update
             (vm.lrc)">修改</md-button>

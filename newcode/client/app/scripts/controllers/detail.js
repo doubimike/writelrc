@@ -8,7 +8,7 @@
  * Controller of the clientApp
  */
 angular.module('clientApp')
-    .controller('DetailCtrl', function($http, $stateParams, $rootScope, $state, $mdDialog, $scope) {
+    .controller('DetailCtrl', function($http, $stateParams, $rootScope, $state, $mdDialog, $scope, $mdBottomSheet) {
         var vm = this;
         var id = $stateParams.lrcID;
         var comparescope = $scope;
@@ -23,7 +23,40 @@ angular.module('clientApp')
         vm.deleteComment = deleteComment;
         vm.deleteLrc = deleteLrc;
         vm.update = update;
+        vm.share = share;
 
+        function share() {
+            $mdBottomSheet.show({
+                templateUrl: '../../views/share.html',
+                controller: ShareCtrl,
+            });
+
+            function ShareCtrl() {
+                // body...
+            }
+        }
+
+        // function loadScript(url, callback) {
+        //     // Adding the script tag to the head as suggested before
+        //     var head = document.getElementsByTagName('head')[0];
+        //     var script = document.createElement('script');
+        //     script.type = 'text/javascript';
+        //     script.src = url;
+
+        //     // Then bind the event to the callback function.
+        //     // There are several events for cross browser compatibility.
+        //     script.onreadystatechange = callback;
+        //     script.onload = callback;
+
+        //     // Fire the loading
+        //     head.appendChild(script);
+        //     console.log('tt')
+        // }
+        // // jiathis
+        // var jiathis_config = {
+        //     data_track_clickback: 'true'
+        // };
+        // loadScript('http://v3.jiathis.com/code/jia.js?uid=2122074');
         function update(lrc) {
             $state.go('write', { lrc: lrc });
         }

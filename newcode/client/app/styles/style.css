@@ -94,3 +94,7 @@ md-content.md-default-theme {
 .pointer {
     cursor: pointer;
 }
+
+md-bottom-sheet {
+    position: fixed;
+}

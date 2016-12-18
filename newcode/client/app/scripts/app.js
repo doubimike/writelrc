@@ -160,10 +160,23 @@ angular
                 console.log(data);
             });
         }
-    }).controller('GeneralCtrl', function GeneralCtrl($mdPanel) {
+    }).controller('GeneralCtrl', function GeneralCtrl($mdPanel, $mdBottomSheet) {
         var vm = this;
         vm._mdPanel = $mdPanel;
         var panelRef;
+        vm.set = set;
+
+        function set() {
+            $mdBottomSheet.show({
+                templateUrl: '../../views/settings.html',
+                controller: SetCtrl,
+            });
+
+            function SetCtrl() {
+                // body...
+            }
+        }
+
 
         GeneralCtrl.prototype.showMenu = function(ev) {
             var position = vm._mdPanel.newPanelPosition()
