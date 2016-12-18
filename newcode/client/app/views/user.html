@@ -1,44 +1,33 @@
 <div>
     <md-list>
-        <md-list-item class="md-3-line md-long-text">
-            <div class="md-list-item-text">
-                <h3>喜欢与爱</h3>
-                <p>说不上为什么</p>
-                <p>我变得很主动</p>
-                <p>若爱上一个人什么都会值得去做</p>
-                <p>我想大声宣布...</p>
-            </div>
-            <span>5天前</span>
-        </md-list-item>
-        <md-divider></md-divider>
-        <md-list-item class="md-3-line md-long-text">
-            <div class="md-list-item-text">
-                <h3>喜欢与爱</h3>
-                <p>说不上为什么</p>
-                <p>我变得很主动</p>
-                <p>若爱上一个人什么都会值得去做</p>
-                <p>我想大声宣布...</p>
-            </div>
-            <span>5天前</span>
-        </md-list-item>
-        <md-divider></md-divider>
-        <md-list-item class="md-3-line md-long-text">
-            <div class="md-list-item-text">
-                <h3>喜欢与爱</h3>
-                <p>说不上为什么</p>
-                <p>我变得很主动</p>
-                <p>若爱上一个人什么都会值得去做</p>
-                <p>我想大声宣布...</p>
-            </div>
-            <span>5天前</span>
-        </md-list-item>
+        <div ng-repeat="item in vm.lrcs">
+            <md-list-item class="md-3-line md-long-text" ui-sref="detail({lrcID: item._id})">
+                <div class="md-list-item-text">
+                    <time title="{{ item.publishTime | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}" am-time-ago="item.publishTime"></time>
+                    <h3>{{item.title}}</h3>
+                    <p>{{item.content}}</p>
+                    <p>阅读{{item.views}}</p>
+                    <p>喜欢{{item.likes}}</p>
+                    <p>评论{{item.comments.length}}</p>
+                </div>
+            </md-list-item>
+            <md-divider></md-divider>
+        </div>
     </md-list>
 </div>
-<div>
-    <img src="" alt="">
+<div ng-cloak>
+    <img ng-src="{{vm.user.head}}" alt="avatar">
     <span>成都市</span>
-    <span>名字</span>
-    <span>简介</span>
-    <md-button class="md-raised md-warn">关注</md-button>
-    <span>3首</span>
+    <span>{{vm.user.name}}</span>
+    <div>
+        <span ng-show="!vm.user.intro && ($root.globals.user._id !== vm.user._id)">暂无自我介绍</span>
+        <span ng-show="!!vm.user.intro">{{vm.user.intro}}</span>
+        <md-button ng-show=" !vm.user.intro && ($root.globals.user._id == vm.user._id)" ng-click="vm.addIntro($event)">点击输入自我介绍</md-button>
+        <md-button ng-show=" vm.user.intro && ($root.globals.user._id == vm.user._id)" ng-click="vm.addIntro($event,vm.user.intro)">[编辑]</md-button>
+    </div>
+    <md-button class="md-raised md-warn" ng-show="$root.globals.user._id !== vm.user._id" ng-click="vm.follow(vm.user._id,vm.followed)"><span ng-show="!vm.followed">关注</span><span ng-show="vm.followed">取消关注</span></md-button>
+    <span>{{vm.lrcs.length}}首歌词</span>
+    <span>{{vm.user.followers.length}}关注</span>
+    <span>{{vm.likes}}喜欢</span>
+    <span>{{vm.comments}}评论</span>
 </div>

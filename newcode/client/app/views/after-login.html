@@ -70,11 +70,10 @@
             </md-button>
             <span>写下自己的歌词</span>
             <md-list flex>
-                <md-subheader class="md-no-sticky">我的歌词 <a href="">More...</a></md-subheader>
+                <md-subheader class="md-no-sticky">我的歌词 <a ui-sref="user({userID: $root.globals.user._id})">More...</a></md-subheader>
                 <md-list-item class="md-3-line" ng-repeat="item in vm.lrcs" ui-sref="detail({lrcID: item._id})">
                     <div class="md-list-item-text" layout="column">
                         <p>{{item.title}}</p>
-                        <p>{{item._id}}</p>
                     </div>
                 </md-list-item>
             </md-list>

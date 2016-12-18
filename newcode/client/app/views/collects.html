@@ -1,0 +1,15 @@
+<md-list>
+    <div ng-repeat="item in vm.lrcs">
+        <md-list-item class="md-3-line md-long-text" ui-sref="detail({lrcID: item._id})">
+            <div class="md-list-item-text">
+                <time title="{{ item.publishTime | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}" am-time-ago="item.publishTime"></time>
+                <h3>{{item.title}}</h3>
+                <p>{{item.content}}</p>
+                <p>阅读{{item.views}}</p>
+                <p>喜欢{{item.likes}}</p>
+                <p>评论{{item.comments.length}}</p>
+            </div>
+        </md-list-item>
+        <md-divider></md-divider>
+    </div>
+</md-list>

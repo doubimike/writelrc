@@ -1,15 +1,15 @@
 <md-list>
-    <md-list-item class="md-3-line" ng-click="null">
+    <md-list-item class="md-3-line" ui-sref="write">
         <div class="md-list-item-text" layout="column">
             <a>写歌词</a>
         </div>
     </md-list-item>
-    <md-list-item class="md-3-line" ng-click="null">
+    <md-list-item class="md-3-line" ui-sref="user({userID: $root.globals.user._id})">
         <div class="md-list-item-text" layout="column">
             <a>我的主页</a>
         </div>
     </md-list-item>
-    <md-list-item class="md-3-line" ng-click="null">
+    <md-list-item class="md-3-line" ui-sref="collects">
         <div class="md-list-item-text" layout="column">
             <a>收藏</a>
         </div>
@@ -34,7 +34,7 @@
             <a ui-sref="resetPass">修改密码</a>
         </div>
     </md-list-item>
-    <md-list-item class="md-3-line" ng-click="null">
+    <md-list-item class="md-3-line" ui-sref="logout">
         <div class="md-list-item-text" layout="column">
             <a>退出</a>
         </div>

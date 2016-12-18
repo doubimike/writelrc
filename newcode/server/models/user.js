@@ -1,5 +1,6 @@
 var mongodb = require('./db');
 var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
 mongoose.connect('mongodb://localhost/lrc');
 
 var async = require('async');
@@ -8,16 +9,19 @@ var crypto = require('crypto');
 
 var userSchema = new mongoose.Schema({
     name: { type: String, require: true, unique: true },
+    intro: { type: String },
     password: { type: String, require: true },
     email: { type: String, require: true, unique: true },
     head: String,
     location: String,
     created_at: Date,
     updated_at: Date,
-    // lrcs: [{ type: Schema.Types.ObjectId, ref: 'Lrc' }],
+    followers: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    followees: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    collects: [{ type: Schema.Types.ObjectId, ref: 'Lrc' }],
 });
 
-userSchema.pre('save', function (next) {
+userSchema.pre('save', function(next) {
     // create or update time
     var currentDate = new Date();
     this.updated_at = currentDate;

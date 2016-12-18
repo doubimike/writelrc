@@ -1,0 +1,15 @@
+<md-dialog>
+    <form name="introForm" novalidate>
+        <md-content class="md-padding">
+            <div layout layout-sm="column">
+                <md-input-container flex>
+                    <textarea name="intro" ng-model="vm.intro" placeholder="你为什么是独一无二的存在？" rows="3"> </textarea>
+                </md-input-container>
+            </div>
+        </md-content>
+        <div class="md-actions" layout="row"> <span flex></span>
+            <md-button ng-click="vm.cancel()"> 取消 </md-button>
+            <md-button type="submit" ng-click="vm.submit(introForm.$valid)" class="md-primary"> 提交 </md-button>
+        </div>
+    </form>
+</md-dialog>
