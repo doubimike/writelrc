@@ -76,7 +76,6 @@ md-content.md-default-theme {
 /* Rounded avatars */
 
 .avatar {
-    // float: left;
     position: relative;
     margin: 10px;
     -webkit-border-radius: 50%;
@@ -97,4 +96,8 @@ md-content.md-default-theme {
 
 md-bottom-sheet {
     position: fixed;
+}
+
+.highlighted {
+    background: yellow;
 }

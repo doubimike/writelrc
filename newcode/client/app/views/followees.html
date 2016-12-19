@@ -1,0 +1,11 @@
+<md-list>
+    <div ng-repeat="item in vm.user.followees" ui-sref="user({userID:item._id})">
+        <md-list-item class="md-3-line md-long-text">
+            <div class="md-list-item-text">
+                <span>{{item.name}}</span>
+                <span>{{item.head}}</span>
+            </div>
+        </md-list-item>
+        <md-divider></md-divider>
+    </div>
+</md-list>

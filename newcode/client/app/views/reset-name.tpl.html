@@ -1,15 +1,15 @@
 <md-dialog>
-    <form name="commentForm" novalidate>
+    <form name="resetNameForm" novalidate>
         <md-content class="md-padding">
             <div layout layout-sm="column">
                 <md-input-container flex>
-                    <textarea ng-model="vm.comment.content" placeholder="{{vm.placeholder}}" rows="3" required> </textarea>
+                    <input ng-model="vm.resetName" placeholder="你想起什么新名字？" required> </input>
                 </md-input-container>
             </div>
         </md-content>
         <div class="md-actions" layout="row"> <span flex></span>
             <md-button ng-click="vm.cancel()"> 取消 </md-button>
-            <md-button type="submit" ng-click="vm.submit(commentForm.$valid)" class="md-primary"> 提交 </md-button>
+            <md-button type="submit" ng-click="vm.submit(resetNameForm.$valid)" class="md-primary"> 提交 </md-button>
         </div>
     </form>
 </md-dialog>

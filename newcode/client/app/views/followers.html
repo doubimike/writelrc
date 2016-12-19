@@ -1,0 +1,12 @@
+<md-list>
+    <div ng-repeat="item in vm.user.followers" ui-sref="user({userID:item._id})">
+        <md-list-item class="md-3-line md-long-text">
+            <div class="md-list-item-text">
+                <span>{{item.name}}</span>
+                <span>{{item.head}}</span>
+            </div>
+            <md-button class="md-raised md-warn" ng-show="item.followers.indexOf($root.globals.user._id)<0 && $root.globals.user._id!== item._id " ng-click="vm.follow(item._id,vm.followed)"><span ng-show="item.followers.indexOf($root.globals.user._id)<0">关注</span><span ng-show="!(item.followers.indexOf($root.globals.user._id)<0)">互相关注</span></md-button>
+        </md-list-item>
+        <md-divider></md-divider>
+    </div>
+</md-list>

@@ -27,7 +27,8 @@
     </div>
     <md-button class="md-raised md-warn" ng-show="$root.globals.user._id !== vm.user._id" ng-click="vm.follow(vm.user._id,vm.followed)"><span ng-show="!vm.followed">关注</span><span ng-show="vm.followed">取消关注</span></md-button>
     <span>{{vm.lrcs.length}}首歌词</span>
-    <span>{{vm.user.followers.length}}关注</span>
+    <span ui-sref="followees({id: vm.user._id})">{{vm.user.followees.length}}关注</span>
+    <span ui-sref="followers({id: vm.user._id})">{{vm.user.followers.length}}粉丝</span>
     <span>{{vm.likes}}喜欢</span>
     <span>{{vm.comments}}评论</span>
 </div>

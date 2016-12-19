@@ -4,11 +4,11 @@ var User = require('../models/user');
 var Comment = require('../models/comment');
 var util = require('../util');
 var request = require('request');
-router.post('/write', function(req, res, next) {
+router.post('/write', function (req, res, next) {
 
     var ip = util.getClientIP(req);
     var url = 'http://int.dpool.sina.com.cn/iplookup/iplookup.php?format=json&ip=' + '192.152.3.25';
-    request(url, function(error, response, body) {
+    request(url, function (error, response, body) {
         var bodyObj = JSON.parse(body);
         var city = bodyObj.province;
         var title = req.body.title;
@@ -27,7 +27,7 @@ router.post('/write', function(req, res, next) {
             pubPlace: city
         });
 
-        lrc.save(function(err, lrc) {
+        lrc.save(function (err, lrc) {
             if (err) {
                 return next(err);
             };
@@ -38,11 +38,11 @@ router.post('/write', function(req, res, next) {
 
 });
 
-router.put('/write', function(req, res, next) {
+router.put('/write', function (req, res, next) {
 
     var ip = util.getClientIP(req);
     var url = 'http://int.dpool.sina.com.cn/iplookup/iplookup.php?format=json&ip=' + '192.152.3.25';
-    request(url, function(error, response, body) {
+    request(url, function (error, response, body) {
         var bodyObj = JSON.parse(body);
         var city = bodyObj.province;
         var title = req.body.title;
@@ -70,7 +70,7 @@ router.put('/write', function(req, res, next) {
         //     res.json({ lrc: lrc });
         // });
 
-        Lrc.findByIdAndUpdate(id, { city: city, title: title, content: content, updateTime: new Date() }, function(err, lrc) {
+        Lrc.findByIdAndUpdate(id, { city: city, title: title, content: content, updateTime: new Date() }, function (err, lrc) {
             res.json({ lrc: lrc });
         })
     });
@@ -80,16 +80,16 @@ router.put('/write', function(req, res, next) {
 
 
 
-router.post('/delete', function(req, res, next) {
+router.post('/delete', function (req, res, next) {
     var deleteId = req.body.id;
-    Lrc.findById(deleteId, function(err, lrc) {
+    Lrc.findById(deleteId, function (err, lrc) {
         console.log('req.session.user._id', typeof req.session.user._id)
         console.log('lrc.author', typeof lrc.author)
         console.log(req.session.user._id !== lrc.author)
         if (req.session.user._id !== lrc.author.toString()) {
             return next(util.createApiError(40007, '没有权限'));
         }
-        lrc.remove(function(err) {
+        lrc.remove(function (err) {
             if (err) {
                 next(err);
             }
@@ -98,7 +98,7 @@ router.post('/delete', function(req, res, next) {
     })
 })
 
-router.post('/like/:id', function(req, res, next) {
+router.post('/like/:id', function (req, res, next) {
     var userId = req.session.user._id;
     var likeOrUnlike = req.body.likeOrUnlike;
     if (likeOrUnlike) {
@@ -112,7 +112,7 @@ router.post('/like/:id', function(req, res, next) {
     }
 
     var id = req.params.id;
-    Lrc.findById(id, function(err, lrc) {
+    Lrc.findById(id, function (err, lrc) {
         if (err) {
             return next(err);
         }
@@ -127,7 +127,7 @@ router.post('/like/:id', function(req, res, next) {
             lrc.likeIds.splice(index, 1);
             lrc.likes -= 1;
         }
-        lrc.save(function(err, lrc) {
+        lrc.save(function (err, lrc) {
             if (err) {
                 return next(err);
             }
@@ -136,7 +136,7 @@ router.post('/like/:id', function(req, res, next) {
     });
 });
 
-router.post('/collect/:id', function(req, res, next) {
+router.post('/collect/:id', function (req, res, next) {
     var userId = req.session.user._id;
     var collectOrUncollect = req.body.collectOrUncollect;
     if (collectOrUncollect) {
@@ -150,14 +150,14 @@ router.post('/collect/:id', function(req, res, next) {
     }
 
     var id = req.params.id;
-    Lrc.findById(id, function(err, lrc) {
+    Lrc.findById(id, function (err, lrc) {
         if (err) {
             return next(err);
         }
         if (!lrc) {
             return next(util.createApiError(40005, '没有这篇歌词'));
         }
-        User.findById(userId, function(err, user) {
+        User.findById(userId, function (err, user) {
             if (err) {
                 return next(err);
             }
@@ -172,11 +172,11 @@ router.post('/collect/:id', function(req, res, next) {
                 user.collects.splice(lrcIndex, 1);
                 lrc.collects -= 1;
             }
-            lrc.save(function(err, lrc) {
+            lrc.save(function (err, lrc) {
                 if (err) {
                     return next(err);
                 }
-                user.save(function(err, user) {
+                user.save(function (err, user) {
                     if (err) {
                         return next(err);
                     }
@@ -188,20 +188,20 @@ router.post('/collect/:id', function(req, res, next) {
     });
 });
 
-router.get('/collects', function(req, res, next) {
+router.get('/collects', function (req, res, next) {
     var userId = req.session.user._id;
-    User.findById(userId, '-password -email').populate({ path: 'collects', select: '' }).exec(function(err, user) {
+    User.findById(userId, '-password -email').populate({ path: 'collects', select: '' }).exec(function (err, user) {
         res.apiSuccess({ lrcs: user.collects })
     })
 });
 
-router.get('/all', function(req, res, next) {
+router.get('/all', function (req, res, next) {
     console.log(Object.keys(req));
     // console.log(req.headers);
     Lrc.find({}).populate({
         path: 'author',
         select: 'name head -_id'
-    }).exec(function(err, lrcs) {
+    }).exec(function (err, lrcs) {
         if (err) {
             res.next(err);
         } else {
@@ -210,7 +210,7 @@ router.get('/all', function(req, res, next) {
     });
 });
 
-router.get('/detail/:id', function(req, res, next) {
+router.get('/detail/:id', function (req, res, next) {
     var id = req.params.id;
     Lrc.findById(id).populate({
         path: 'author',
@@ -223,7 +223,7 @@ router.get('/detail/:id', function(req, res, next) {
             select: 'name head -_id',
         },
         options: { sort: { '_id': -1 }, limit: 10 }
-    }).exec(function(err, lrc) {
+    }).exec(function (err, lrc) {
         if (err) {
             return next(err);
         }
@@ -232,7 +232,7 @@ router.get('/detail/:id', function(req, res, next) {
         }
         if (lrc) {
             lrc.views += 1;
-            lrc.save(function(err, lrc) {
+            lrc.save(function (err, lrc) {
                 if (err) {
                     return next(err);
                 }
@@ -242,7 +242,7 @@ router.get('/detail/:id', function(req, res, next) {
     });
 });
 
-router.post('/comment', function(req, res, next) {
+router.post('/comment', function (req, res, next) {
     var user = req.session.user;
     var lrcId = req.body.lrcId;
     var content = req.body.content;
@@ -252,24 +252,24 @@ router.post('/comment', function(req, res, next) {
         content: content,
         lrcId: lrcId
     });
-    comment.save(function(err, comment) {
+    comment.save(function (err, comment) {
         if (err) {
             return next(err);
         }
-        Lrc.findById(lrcId, function(err, lrc) {
+        Lrc.findById(lrcId, function (err, lrc) {
             if (err) {
                 return next(err);
             }
             lrc.comments.push(comment._id);
             // lrc.commentsCount += 1;
-            lrc.save(function(err, lrc) {
+            lrc.save(function (err, lrc) {
                 if (err) {
                     return next(err);
                 }
                 Comment.findById(comment._id).populate({
                     path: 'authorId',
                     select: 'name head _id'
-                }).exec(function(err, comment) {
+                }).exec(function (err, comment) {
 
                     if (err) {
                         return next(err);
@@ -284,14 +284,14 @@ router.post('/comment', function(req, res, next) {
     });
 });
 
-router.delete('/comment', function(req, res, next) {
+router.delete('/comment', function (req, res, next) {
     var user = req.session.user;
     var lrcId = req.query.lrcId;
     var comment = JSON.parse(req.query.comment);
     console.log('comment', comment._id);
     console.log('typeof comment', typeof comment);
 
-    Comment.findByIdAndRemove(comment._id, function(err) {
+    Comment.findByIdAndRemove(comment._id, function (err) {
         if (err) {
             return next(err);
         }
@@ -311,11 +311,11 @@ router.delete('/comment', function(req, res, next) {
     // });
 });
 
-router.get('/mine', function(req, res, next) {
+router.get('/mine', function (req, res, next) {
     var user = req.session.user;
     console.log('user,user', user)
     if (user) {
-        Lrc.find({ author: user._id }, function(err, lrcs) {
+        Lrc.find({ author: user._id }, function (err, lrcs) {
             if (err) {
                 return next(err);
             }
@@ -326,16 +326,32 @@ router.get('/mine', function(req, res, next) {
     }
 });
 
-router.post('/loadMoreComment', function(req, res, next) {
+router.post('/loadMoreComment', function (req, res, next) {
     var beginIndex = req.body.index;
     console.log('beginIndex', beginIndex)
     var lrcId = req.body.lrcId;
     Comment.find({ lrcId: lrcId }).sort({ commentTime: -1 }).skip(beginIndex).limit(10).populate({
         path: 'authorId',
         select: 'name head _id'
-    }).exec(function(err, comments) {
+    }).exec(function (err, comments) {
         res.apiSuccess({ comments: comments });
     });
 })
+
+router.post('/search', function (req, res, next) {
+    var search = req.body.search;
+    if (search) {
+        Lrc.find({ $or: [{ 'content': new RegExp(search, 'i') }, { 'bg': new RegExp(search, 'i') }, { 'title': new RegExp(search, 'i') }] }, function (err, lrcs) {
+            if (err) {
+                return next(err);
+            }
+
+            res.apiSuccess({ lrcs: lrcs });
+
+        });
+    } else {
+        res.apiSuccess({ lrcs: [] });
+    }
+});
 
 module.exports = router;

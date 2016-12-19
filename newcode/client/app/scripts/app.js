@@ -21,9 +21,9 @@ angular
         'ui.router',
         'angularMoment'
     ])
-    .factory('errorHandlerInterceptor', function() {
+    .factory('errorHandlerInterceptor', function () {
         var errorHandlerInterceptor = {
-            response: function(response) {
+            response: function (response) {
                 if (response.data.status == 'Error') {
                     alert(response.data.error_message);
                 }
@@ -32,11 +32,11 @@ angular
         }
         return errorHandlerInterceptor;
     })
-    .config(function($stateProvider, $urlRouterProvider, $mdThemingProvider, $qProvider, $httpProvider) {
+    .config(function ($stateProvider, $urlRouterProvider, $mdThemingProvider, $qProvider, $httpProvider) {
         $httpProvider.interceptors.push('errorHandlerInterceptor');
 
 
-        // $qProvider.errorOnUnhandledRejections(false);
+        $qProvider.errorOnUnhandledRejections(false);
 
         var customBlueMap = $mdThemingProvider.extendPalette('light-blue', {
             'contrastDefaultColor': 'light',
@@ -121,6 +121,26 @@ angular
                 controller: 'CollectCtrl',
                 controllerAs: 'vm'
             })
+            .state('search', {
+                url: '/search',
+                templateUrl: 'views/search.html',
+                controller: 'SearchCtrl',
+                controllerAs: 'vm',
+                params: { 'content': '' }
+            })
+            .state('followers', {
+                url: '/followers',
+                templateUrl: 'views/followers.html',
+                controller: 'FollowersCtrl',
+                controllerAs: 'vm',
+                params: { 'id': '' }
+            }).state('followees', {
+                url: '/followees',
+                templateUrl: 'views/followees.html',
+                controller: 'FolloweesCtrl',
+                controllerAs: 'vm',
+                params: { 'id': '' }
+            })
             .state('test', {
                 url: '/test',
                 templateUrl: 'views/test.html',
@@ -128,10 +148,10 @@ angular
                 controllerAs: 'vm'
             });
     })
-    .run(function($rootScope, $cookieStore, $location, amMoment) {
+    .run(function ($rootScope, $cookieStore, $location, amMoment) {
         amMoment.changeLocale('zh-hk');
         $rootScope.globals = $cookieStore.get('globals') || {};
-        $rootScope.$on('$locationChangeStart', function(event, next, current) {
+        $rootScope.$on('$locationChangeStart', function (event, next, current) {
             var path = $location.path();
             var restrictedPage = (path === '/test');
             var loggedIn = $rootScope.globals.user;
@@ -145,40 +165,133 @@ angular
             }
 
         });
-    }).controller('LogoutCtrl', function($http, $rootScope, $cookieStore, $state) {
+    }).controller('LogoutCtrl', function ($http, $rootScope, $cookieStore, $state) {
         var vm = this;
         vm.logout = logout;
 
         function logout() {
-            $http.get('/logout').then(function(data) {
+            $http.get('/logout').then(function (data) {
                 if (data.status == 200) {
                     $rootScope.globals = {};
                     $cookieStore.remove('globals');
                     $state.go('main');
                 }
-            }, function(data) {
+            }, function (data) {
                 console.log(data);
             });
         }
-    }).controller('GeneralCtrl', function GeneralCtrl($mdPanel, $mdBottomSheet) {
+    }).controller('GeneralCtrl', function GeneralCtrl($mdPanel, $mdBottomSheet, $state, $window) {
         var vm = this;
         vm._mdPanel = $mdPanel;
         var panelRef;
         vm.set = set;
+        vm.showSearch = false;
+        vm.search = search;
+        vm.cancelSearch = cancelSearch;
+
+        function cancelSearch() {
+            vm.showSearch = !vm.showSearch;
+            if ($state.current.name == 'search') {
+                $window.history.back();
+            }
+
+        }
+
+        function search(content) {
+            $state.go('search', { content: content });
+
+        }
 
         function set() {
             $mdBottomSheet.show({
                 templateUrl: '../../views/settings.html',
                 controller: SetCtrl,
+                controllerAs: 'vm'
             });
 
-            function SetCtrl() {
-                // body...
+            function SetCtrl($mdDialog) {
+                var vm = this;
+                vm.resetPass = resetPass;
+                vm.resetName = resetName;
+
+                function resetPass() {
+                    $mdDialog.show({
+                        controller: resetPassCtrl,
+                        controllerAs: 'vm',
+                        templateUrl: '../../views/reset-pass.tpl.html',
+                        clickOutsideToClose: true,
+                    });
+
+                    function resetPassCtrl($http, $mdDialog, $cookieStore, $rootScope) {
+                        var vm = this;
+                        vm.submit = submit;
+                        vm.cancel = function () {
+                            $mdDialog.cancel();
+                        };
+
+                        function submit(valid) {
+                            console.log('submit')
+                            if (valid) {
+                                $http.put('/user/resetpassword', { newPass: vm.newPass, oldPass: vm.oldPass }).then(function (res) {
+                                    if (res.data.status == 'OK') {
+                                        alert('成功');
+
+                                        $mdDialog.cancel();
+
+                                    }
+
+                                }, function (res) {
+                                    util.errorHandler(res);
+                                });
+
+
+                            }
+                        }
+                    }
+                }
+
+                function resetName() {
+                    $mdDialog.show({
+                        controller: resetNameCtrl,
+                        controllerAs: 'vm',
+                        templateUrl: '../../views/reset-name.tpl.html',
+                        clickOutsideToClose: true,
+                    });
+
+                    function resetNameCtrl($http, $mdDialog, $cookieStore, $rootScope) {
+                        var vm = this;
+                        vm.submit = submit;
+                        vm.cancel = function () {
+                            $mdDialog.cancel();
+                        };
+
+                        function submit(valid) {
+                            console.log('submit')
+                            if (valid) {
+                                $http.put('/user/rename', { newName: vm.resetName }).then(function (res) {
+                                    if (res.data.status == 'OK') {
+                                        alert('成功');
+                                        $rootScope.globals.user = res.data.result;
+                                        console.log('$rootScope.globals.user', $rootScope.globals.user);
+                                        $cookieStore.put('globals', $rootScope.globals);
+                                        $mdDialog.cancel();
+
+                                    }
+
+                                }, function (res) {
+                                    util.errorHandler(res);
+                                });
+
+
+                            }
+                        }
+                    }
+                }
             }
         }
 
 
-        GeneralCtrl.prototype.showMenu = function(ev) {
+        GeneralCtrl.prototype.showMenu = function (ev) {
             var position = vm._mdPanel.newPanelPosition()
                 .relativeTo('.menu')
                 .addPanelPosition(vm._mdPanel.xPosition.CENTER, vm._mdPanel.yPosition.BELOW);
@@ -195,7 +308,7 @@ angular
                 zIndex: 2
             };
 
-            vm._mdPanel.open(config).then(function(result) {
+            vm._mdPanel.open(config).then(function (result) {
                 panelRef = result;
             });
 
@@ -205,17 +318,17 @@ angular
             this._mdPanelRef = mdPanelRef;
         }
 
-        PanelMenuCtrl.prototype.closeMenu = function() {
+        PanelMenuCtrl.prototype.closeMenu = function () {
             var panelRef = this._mdPanelRef;
-            panelRef && panelRef.close().then(function() {
+            panelRef && panelRef.close().then(function () {
                 panelRef.destroy();
             });
         }
 
-        GeneralCtrl.prototype.closeMenu = function() {
+        GeneralCtrl.prototype.closeMenu = function () {
             console.log('closeMenu')
             console.log(panelRef)
-            panelRef && panelRef.close().then(function() {
+            panelRef && panelRef.close().then(function () {
                 // angular.element(document.querySelector('.menu')).focus();
                 panelRef.destroy();
             });

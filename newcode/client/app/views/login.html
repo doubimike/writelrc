@@ -25,7 +25,7 @@
                     <input name="password" type="password" ng-model="vm.user.password" required minlength="6" />
                     <div ng-messages="userForm.password.$error">
                         <div ng-message-exp="['required', 'minlength']">
-                            请填写正确的密码。
+                            请填写正确的密码。[长度最小为六位]
                         </div>
                     </div>
                 </md-input-container>

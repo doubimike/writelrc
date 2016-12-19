@@ -21,16 +21,16 @@ var userSchema = new mongoose.Schema({
     collects: [{ type: Schema.Types.ObjectId, ref: 'Lrc' }],
 });
 
-userSchema.pre('save', function(next) {
+userSchema.pre('save', function (next) {
     // create or update time
     var currentDate = new Date();
     this.updated_at = currentDate;
     if (!this.created_at) {
         this.created_at = currentDate;
     };
-    var md5 = crypto.createHash('md5');
-    // hash pw
-    this.password = md5.update(this.password).digest('hex');
+    // var md5 = crypto.createHash('md5');
+    // // hash pw
+    // this.password = md5.update(this.password).digest('hex');
 
     // hash head
     var md5 = crypto.createHash('md5');
