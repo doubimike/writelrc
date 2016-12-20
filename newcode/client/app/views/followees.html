@@ -3,7 +3,16 @@
         <md-list-item class="md-3-line md-long-text">
             <div class="md-list-item-text">
                 <span>{{item.name}}</span>
-                <span>{{item.head}}</span>
+            </div>
+            <div ng-show="vm.selfId !== item._id">
+                <md-button class="md-raised md-warn" ng-show="vm.ifSelf">
+                    <span ng-show="item.followees.indexOf(vm.selfId)>=0">互相关注</span>
+                    <span ng-show="item.followees.indexOf(vm.selfId)==-1">已关注</span>
+                </md-button>
+                <md-button class="md-raised md-warn" ng-show="!vm.ifSelf">
+                    <span ng-show="item.followers.indexOf(vm.selfId)==-1">去关注</span>
+                    <span ng-show="item.followers.indexOf(vm.selfId)>=0">已关注</span>
+                </md-button>
             </div>
         </md-list-item>
         <md-divider></md-divider>

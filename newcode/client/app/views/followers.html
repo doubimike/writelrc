@@ -3,9 +3,18 @@
         <md-list-item class="md-3-line md-long-text">
             <div class="md-list-item-text">
                 <span>{{item.name}}</span>
-                <span>{{item.head}}</span>
+                <img ng-src="{{item.head}}" alt="avatar">
             </div>
-            <md-button class="md-raised md-warn" ng-show="item.followers.indexOf($root.globals.user._id)<0 && $root.globals.user._id!== item._id " ng-click="vm.follow(item._id,vm.followed)"><span ng-show="item.followers.indexOf($root.globals.user._id)<0">关注</span><span ng-show="!(item.followers.indexOf($root.globals.user._id)<0)">互相关注</span></md-button>
+            <md-button class="md-raised md-warn" ng-show="(vm.selfId!== item._id)">
+                <!-- 暂时我觉得不用在这个页面添加关注功能  ng-click="vm.follow(item._id,false,$event,$index)" -->
+                <span ng-show="item.followers.indexOf(vm.selfId)==-1">去关注</span>
+                <span ng-show="item.followers.indexOf(vm.selfId)>=0">已关注</span>
+            </md-button>
+            <div ng-show="vm.selfId == item._id">
+                <md-button class="md-raised md-warn">
+                    <span>自己</span>
+                </md-button>
+            </div>
         </md-list-item>
         <md-divider></md-divider>
     </div>

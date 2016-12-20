@@ -129,17 +129,17 @@ angular
                 params: { 'content': '' }
             })
             .state('followers', {
-                url: '/followers',
+                url: '/followers/:id',
                 templateUrl: 'views/followers.html',
                 controller: 'FollowersCtrl',
                 controllerAs: 'vm',
-                params: { 'id': '' }
+                // params: { 'id': '' }
             }).state('followees', {
-                url: '/followees',
+                url: '/followees/:id',
                 templateUrl: 'views/followees.html',
                 controller: 'FolloweesCtrl',
                 controllerAs: 'vm',
-                params: { 'id': '' }
+                // params: { 'id': '' }
             })
             .state('test', {
                 url: '/test',
