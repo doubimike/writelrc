@@ -62,7 +62,7 @@
                     </p>
                 </div>
                 <div>
-                    <md-button ng-click="vm.replyComment($event,item.authorId.name)">
+                    <md-button ng-click="vm.replyComment($event,item.authorId.name,item.authorId._id)">
                         <md-icon> comment </md-icon>
                     </md-button>
                     <md-button ng-click="vm.deleteComment($event,item,$index)" ng-show="$root.globals.user.name==item.authorId.name">

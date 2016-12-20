@@ -64,7 +64,12 @@ router.post('/log', function (req, res, next) {
     var md5 = crypto.createHash('md5');
     password = md5.update(req.body.password).digest('hex');
 
-    User.findOne({ email: email }, function (err, user) {
+    User.findOne({ email: email }).populate({
+        path: 'msgBox',
+        populate: {
+            path: 'msgBox.content.authorId'
+        }
+    }).exec(function (err, user) {
         if (err) {
             return next(err);
         }
@@ -84,7 +89,8 @@ router.post('/log', function (req, res, next) {
             name: user.name,
             email: user.email,
             head: user.head,
-            _id: user._id
+            _id: user._id,
+            msgBox: user.msgBox
         });
     });
 });
@@ -258,6 +264,27 @@ router.get('/user/followees', function (req, res, next) {
 
         res.apiSuccess({ user: user });
 
+    })
+})
+
+router.post('/user/msg/read', function (req, res, next) {
+    var msgId = req.body.msgId;
+    var userId = req.session.user._id;
+    User.findById(userId, function (err, user) {
+        if (err) {
+            return next(err);
+
+        }
+
+        user.msgBox.id(msgId).readed = true;
+        user.save(function (err, user) {
+            if (err) {
+                return next(err);
+
+            }
+
+            res.apiSuccess({ msg: 'OK' });
+        })
     })
 })
 

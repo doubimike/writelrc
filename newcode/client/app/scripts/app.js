@@ -141,6 +141,12 @@ angular
                 controllerAs: 'vm',
                 // params: { 'id': '' }
             })
+            .state('msgBox', {
+                url: '/msgBox',
+                templateUrl: 'views/msgBox.html',
+                controller: 'msgBoxCtrl',
+                controllerAs: 'vm',
+            })
             .state('test', {
                 url: '/test',
                 templateUrl: 'views/test.html',

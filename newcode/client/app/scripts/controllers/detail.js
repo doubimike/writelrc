@@ -8,7 +8,7 @@
  * Controller of the clientApp
  */
 angular.module('clientApp')
-    .controller('DetailCtrl', function($http, $stateParams, $rootScope, $state, $mdDialog, $scope, $mdBottomSheet) {
+    .controller('DetailCtrl', function ($http, $stateParams, $rootScope, $state, $mdDialog, $scope, $mdBottomSheet) {
         var vm = this;
         var id = $stateParams.lrcID;
         var comparescope = $scope;
@@ -61,10 +61,10 @@ angular.module('clientApp')
             $state.go('write', { lrc: lrc });
         }
         init();
-        $scope.$on('commentsChange', function(event, msg) {
+        $scope.$on('commentsChange', function (event, msg) {
             vm.lrc.comments.splice(0, 0, msg);
         });
-        $scope.$on('commentsChangeMore', function(event, msg) {
+        $scope.$on('commentsChangeMore', function (event, msg) {
             console.log('commentsChangeMore')
             console.log('msg', msg)
             console.log(vm.lrc.comments, 'vm.lrc.comments')
@@ -80,39 +80,39 @@ angular.module('clientApp')
             console.log(vm.lrc.comments, 'vm.lrc.comments')
 
         });
-        $scope.$on('commentsDelFound', function(event, msg) {
+        $scope.$on('commentsDelFound', function (event, msg) {
             vm.lrc.comments.splice(msg, 1);
         });
         vm.loadMore = loadMore;
 
 
         function deleteLrc(id) {
-            $http.post('/lrc/delete', { id: id }).then(function(res) {
+            $http.post('/lrc/delete', { id: id }).then(function (res) {
                 if (res.data.status == 'OK') {
                     console.log('ok')
                     alert('成功');
                     $state.go('write');
                 }
 
-            }, function(res) {
+            }, function (res) {
                 util.errorHandler(res);
             });
         }
 
         function loadMore(id, index) {
-            $http.post('/lrc/loadMoreComment', { lrcId: id, index: index }).then(function(res) {
+            $http.post('/lrc/loadMoreComment', { lrcId: id, index: index }).then(function (res) {
                 if (res.data.status == 'OK') {
                     $rootScope.$broadcast('commentsChangeMore', res.data.result)
 
                 }
 
-            }, function(res) {
+            }, function (res) {
 
             });
         }
 
         function init() {
-            $http.get('/lrc/detail/' + id).then(function(res) {
+            $http.get('/lrc/detail/' + id).then(function (res) {
                 console.log(res)
                 if (res.status == 200) {
                     vm.lrc = res.data;
@@ -122,7 +122,7 @@ angular.module('clientApp')
                     console.log('vm.lrc.likeIds', vm.lrc.likeIds)
                     console.log('$rootScope.globals.user', $rootScope.globals.user)
                 }
-            }, function(res) {
+            }, function (res) {
                 console.log('')
 
             });
@@ -132,7 +132,7 @@ angular.module('clientApp')
             if (!$rootScope.globals.user) {
                 return $state.go('login');
             }
-            $http.post('/lrc/like/' + id, { likeOrUnlike: !vm.likeByUser }).then(function(res) {
+            $http.post('/lrc/like/' + id, { likeOrUnlike: !vm.likeByUser }).then(function (res) {
                 console.log('res', res)
                 if (res.data.status == 'OK') {
                     vm.likeByUser = !vm.likeByUser;
@@ -146,7 +146,7 @@ angular.module('clientApp')
 
                 }
 
-            }, function(res) {
+            }, function (res) {
 
             });
         }
@@ -155,7 +155,7 @@ angular.module('clientApp')
             if (!$rootScope.globals.user) {
                 return $state.go('login');
             }
-            $http.post('/lrc/collect/' + id, { collectOrUncollect: !vm.collectByUser }).then(function(res) {
+            $http.post('/lrc/collect/' + id, { collectOrUncollect: !vm.collectByUser }).then(function (res) {
                 console.log('res', res)
                 if (res.data.status == 'OK') {
                     vm.collectByUser = !vm.collectByUser;
@@ -169,27 +169,25 @@ angular.module('clientApp')
 
                 }
 
-            }, function(res) {
+            }, function (res) {
 
             });
         }
 
-        function addComment(ev, tag, authorName) {
+        function addComment(ev, tag, authorName, authorId) {
             var dom = document.getElementById('detail');
             var parentEl = angular.element(dom);
             $mdDialog.show({
                 parent: parentEl,
                 controller: CommentCtrl,
-                locals: { tag: tag, authorName: authorName },
+                locals: { tag: tag, authorName: authorName, authorId: authorId },
                 bindToController: true,
                 controllerAs: 'vm',
                 templateUrl: '../../views/comment.tpl.html',
                 clickOutsideToClose: true,
             });
 
-            function CommentCtrl($mdDialog, $scope, tag, authorName) {
-
-
+            function CommentCtrl($mdDialog, $scope, tag, authorName, authorId) {
 
                 var vm = this;
                 if (tag == 'reply') {
@@ -198,10 +196,10 @@ angular.module('clientApp')
                     vm.placeholder = '写下你的词评';
                 }
                 console.log(vm.placeholder, 'vm.placeholder')
-                vm.cancel = function() {
+                vm.cancel = function () {
                     $mdDialog.cancel();
                 };
-                vm.submit = function(valid) {
+                vm.submit = function (valid) {
                     if (valid) {
                         var content;
                         if (tag == 'reply') {
@@ -211,8 +209,9 @@ angular.module('clientApp')
                         }
                         $http.post('/lrc/comment', {
                             lrcId: id,
-                            content: content
-                        }).then(function(res) {
+                            content: content,
+                            authorId: authorId
+                        }).then(function (res) {
                             if (res.data.status == 'OK') {
                                 // $scope.vm.lrc.comments = [];
                                 console.log('res.data.result', res.data.result)
@@ -221,7 +220,7 @@ angular.module('clientApp')
                                 $mdDialog.cancel();
                             }
 
-                        }, function(res) {
+                        }, function (res) {
                             util.errorHandler(res);
                         });
                     }
@@ -233,22 +232,22 @@ angular.module('clientApp')
             var confirm = $mdDialog.confirm().title('确定要删除此条评论么？')
                 .ok('确定')
                 .cancel('取消');
-            $mdDialog.show(confirm).then(function() {
-                $http.delete('/lrc/comment', { params: { lrcId: id, comment: comment } }).then(function(res) {
+            $mdDialog.show(confirm).then(function () {
+                $http.delete('/lrc/comment', { params: { lrcId: id, comment: comment } }).then(function (res) {
                     if (res.data.status == 'OK') {
                         $rootScope.$broadcast('commentsDelFound', $index);
                     }
-                }, function(res) {
+                }, function (res) {
                     console.log(res);
                 })
-            }, function() {
+            }, function () {
 
             })
         };
 
-        function replyComment($event, authorName) {
-            console.log('authorName', authorName)
-            addComment($event, 'reply', authorName);
+        function replyComment($event, authorName, authorId) {
+            console.log('authorId', authorId)
+            addComment($event, 'reply', authorName, authorId);
         }
 
 

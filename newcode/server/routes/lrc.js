@@ -122,17 +122,44 @@ router.post('/like/:id', function (req, res, next) {
         if (likeOrUnlike == 1) {
             lrc.likeIds.push(userId);
             lrc.likes += 1;
+
+            User.findById(lrc.author, function (err, user) {
+                var msg = {
+                    type: '喜欢',
+                    content: {
+                        lrcId: lrc._id,
+                        lrc: lrc,
+                        likeId: userId,
+                    },
+                };
+
+                user.msgBox.push(msg);
+
+                user.save(function (err, user) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    lrc.save(function (err, lrc) {
+                        if (err) {
+                            return next(err);
+                        }
+                        res.apiSuccess({ lrc: lrc });
+                    });
+                });
+            });
         } else if (likeOrUnlike == -1) {
             var index = lrc.likeIds.indexOf(userId);
             lrc.likeIds.splice(index, 1);
             lrc.likes -= 1;
+            lrc.save(function (err, lrc) {
+                if (err) {
+                    return next(err);
+                }
+                res.apiSuccess({ lrc: lrc });
+            });
         }
-        lrc.save(function (err, lrc) {
-            if (err) {
-                return next(err);
-            }
-            res.apiSuccess({ lrc: lrc });
-        });
+
     });
 });
 
@@ -220,7 +247,7 @@ router.get('/detail/:id', function (req, res, next) {
         select: 'content commentTime authorId',
         populate: {
             path: 'authorId',
-            select: 'name head -_id',
+            select: 'name head',
         },
         options: { sort: { '_id': -1 }, limit: 10 }
     }).exec(function (err, lrc) {
@@ -246,6 +273,7 @@ router.post('/comment', function (req, res, next) {
     var user = req.session.user;
     var lrcId = req.body.lrcId;
     var content = req.body.content;
+    var replyToId = req.body.authorId;
     var userId = user._id;
     var comment = new Comment({
         authorId: userId,
@@ -274,9 +302,57 @@ router.post('/comment', function (req, res, next) {
                     if (err) {
                         return next(err);
                     }
-                    if (comment) {
-                        res.apiSuccess(comment);
-                    }
+
+                    User.findById(lrc.author, function (err, user) {
+                        if (err) {
+                            return next(err);
+                        }
+                        console.log('comment', comment)
+                        var msg = {
+                            type: '评论',
+                            content: comment,
+                            author: comment.authorId.name
+                        };
+
+                        user.msgBox.push(msg);
+                        console.log('user.msgBox', user.msgBox);
+
+
+                        user.save(function (err, user) {
+                            if (err) {
+                                return next(err);
+                            }
+                            // 如果是回复，发送通知到被回复的人
+                            console.log('replyToId !== lrc.author', replyToId !== lrc.author)
+                            console.log('replyToId ', replyToId)
+                            console.log('replyToId ', replyToId)
+                            console.log('lrc.author ', lrc.author)
+                            if (replyToId && replyToId !== lrc.author) {
+                                User.findById(replyToId, function (err, user) {
+                                    if (err) {
+                                        return next(err);
+                                    }
+                                    var msg = {
+                                        type: '回复',
+                                        content: comment,
+                                        author: comment.authorId.name
+                                    };
+
+                                    user.msgBox.push(msg);
+
+                                    user.save(function (err) {
+                                        if (err) {
+                                            return next(err);
+                                        }
+                                    });
+                                });
+                            }
+
+                            if (comment) {
+                                res.apiSuccess(comment);
+                            }
+                        });
+                    });
                 });
             });
         });

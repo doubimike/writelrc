@@ -7,6 +7,16 @@ var async = require('async');
 var util = require('../util');
 var crypto = require('crypto');
 
+
+var msgSchema = new Schema({
+    title: String,
+    type: String,
+    time: { type: Date, default: Date.now },
+    content: Object,
+    readed: { type: Boolean, default: false },
+    author: String
+});
+
 var userSchema = new mongoose.Schema({
     name: { type: String, require: true, unique: true },
     intro: { type: String },
@@ -19,6 +29,7 @@ var userSchema = new mongoose.Schema({
     followers: [{ type: Schema.Types.ObjectId, ref: 'User' }],
     followees: [{ type: Schema.Types.ObjectId, ref: 'User' }],
     collects: [{ type: Schema.Types.ObjectId, ref: 'Lrc' }],
+    msgBox: [msgSchema]
 });
 
 userSchema.pre('save', function (next) {
