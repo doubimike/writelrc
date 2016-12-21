@@ -14,7 +14,7 @@ var msgSchema = new Schema({
     time: { type: Date, default: Date.now },
     content: Object,
     readed: { type: Boolean, default: false },
-    author: String
+    author: String,
 });
 
 var userSchema = new mongoose.Schema({
@@ -29,7 +29,9 @@ var userSchema = new mongoose.Schema({
     followers: [{ type: Schema.Types.ObjectId, ref: 'User' }],
     followees: [{ type: Schema.Types.ObjectId, ref: 'User' }],
     collects: [{ type: Schema.Types.ObjectId, ref: 'Lrc' }],
-    msgBox: [msgSchema]
+    msgBox: [msgSchema],
+    resetPasswordToken: String,
+    resetPasswordExpires: Date
 });
 
 userSchema.pre('save', function (next) {

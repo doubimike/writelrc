@@ -31,7 +31,7 @@ angular.module('clientApp')
                         // 设置全局变量
                         $rootScope.globals.user = res.data.result;
                         $cookieStore.put('globals', $rootScope.globals);
-                        $state.go('afterLogin');
+                        $state.go('discovery');
                     }
                 }, function (res) {
                     uitl.errorHandler(res);

@@ -20,9 +20,16 @@ var lrcSchema = new mongoose.Schema({
     collectIds: [{ type: Schema.Types.ObjectId, ref: 'User' }],
     comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
     pubPlace: String,
+    popularScore: { type: Number },
 });
 
 // lrcSchema.index({ title: 'text', content: 'text', bg: 'text', author: 'text' });
+
+lrcSchema.pre('save', function (next) {
+    var popularScore = this.views + this.likes * 5 + this.collects * 10;
+    this.popularScore = popularScore;
+    next();
+});
 
 var Lrc = mongoose.model('Lrc', lrcSchema);
 

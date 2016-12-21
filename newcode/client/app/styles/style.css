@@ -64,6 +64,7 @@ md-content.md-default-theme {
 
 .lrc-card {
     min-height: 300px;
+    box-sizing: border-box;
 }
 
 .register-area,
@@ -104,4 +105,8 @@ md-bottom-sheet {
 
 .unreaded {
     border: 1px purple solid;
+}
+
+.no-margin {
+    margin: 0;
 }

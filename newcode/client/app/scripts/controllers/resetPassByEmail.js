@@ -1,23 +1,16 @@
 'use strict';
-
-/**
- * @ngdoc function
- * @name clientApp.controller:MainCtrl
- * @description
- * # MainCtrl
- * Controller of the clientApp
- */
 angular.module('clientApp')
-    .controller('ForgotPassCtrl', function ($http) {
+    .controller('resetPassByEmailCtrl', function ($stateParams, $http) {
         var vm = this;
+        var token = $stateParams.token;
         vm.submit = submit;
 
         function submit(valid) {
             console.log('submit')
             if (valid) {
-                $http.post('/forgotPass', { email: vm.email }).then(function (res) {
+                $http.put('/user/resetPasswordByEmail', { newPass: vm.newPass, token: token }).then(function (res) {
                     if (res.data.status == 'OK') {
-                        alert('已发送重置密码到您的邮件。')
+                        alert('成功');
                     }
 
                 }, function (res) {

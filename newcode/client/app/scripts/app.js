@@ -55,7 +55,8 @@ angular
 
 
         $urlRouterProvider.otherwise('/main');
-        $stateProvider.state('main', {
+        $stateProvider
+            .state('main', {
                 url: '/main',
                 templateUrl: 'views/main.html',
                 controller: 'MainCtrl',
@@ -79,10 +80,10 @@ angular
                 controller: 'LoginCtrl',
                 controllerAs: 'vm'
             })
-            .state('afterLogin', {
-                url: '/after-login',
-                templateUrl: 'views/after-login.html',
-                controller: 'AfterLoginCtrl',
+            .state('discovery', {
+                url: '/discovery',
+                templateUrl: 'views/discovery.html',
+                controller: 'discoveryCtrl',
                 controllerAs: 'vm'
             })
             .state('write', {
@@ -108,6 +109,12 @@ angular
                 url: '/forgot-pass',
                 templateUrl: 'views/forgot-pass.html',
                 controller: 'ForgotPassCtrl',
+                controllerAs: 'vm'
+            })
+            .state('resetPassByEmail', {
+                url: '/resetPassByEmail/:token',
+                templateUrl: 'views/resetPassByEmail.html',
+                controller: 'resetPassByEmailCtrl',
                 controllerAs: 'vm'
             })
             .state('resetPass', {
@@ -166,7 +173,7 @@ angular
             }
             if (loggedIn) {
                 if (path == '/login' || path == '/register') {
-                    $location.path('/after-login');
+                    $location.path('/discovery');
                 }
             }
 

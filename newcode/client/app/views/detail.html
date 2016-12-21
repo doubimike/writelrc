@@ -5,7 +5,7 @@
         </md-card-title-text>
     </md-card-title>
     <md-card-content>
-        <p>{{vm.lrc.content}}</p>
+        <pre ng-bind-html="vm.lrc.content"></pre>
     </md-card-content>
     <md-card-footer>
         <a ui-sref="user({userID: vm.lrc.author._id})">

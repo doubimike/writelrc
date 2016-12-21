@@ -1,0 +1,87 @@
+<md-content>
+    <div layout="row" ng-cloak class="minus-toolbar">
+        <span flex></span>
+        <div flex="60" layout="column">
+            <md-content flex layout="column">
+                <md-tabs md-border-bottom flex>
+                    <md-tab label="佳作">
+                        <md-content class="md-padding">
+                            <div layout="row" layout-wrap layout-margin>
+                                <md-card ng-repeat="lrc in vm.lrcList" flex="33" class="lrc-card no-margin" layout-padding>
+                                    <a ui-sref="detail({lrcID: lrc._id})" layout="column" flex>
+                                        <md-card-title>
+                                            <md-card-title-text>
+                                                <span class="md-headline">{{lrc.title}}</span>
+                                                <span class="md-subhead"><img ng-src="{{lrc.author.head}}" alt="avatar">{{lrc.author.name}}</span>
+                                                <time title="{{ lrc.publishTime | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}">{{ lrc.publishTime | amCalendar }}</time>
+                                            </md-card-title-text>
+                                        </md-card-title>
+                                        <md-card-content>
+                                            <pre>{{lrc.content| limitTo: 20}}{{lrc.content.length > 20 ? '...' : ''}}</pre>
+                                        </md-card-content>
+                                        <div flex></div>
+                                        <md-card-footer layout="row" layout-align="space-between center">
+                                            <div>{{lrc.views}}次阅读</div>
+                                            <div><span>{{lrc.likes}}次喜欢</span>
+                                            </div>
+                                            <div>{{lrc.collects}}次收藏</div>
+                                        </md-card-footer>
+                                    </a>
+                                </md-card>
+                            </div>
+                            <div layout="row" layout-align="center">
+                                <md-button class="md-raised md-primary" ng-show="!vm.hideLoadMoreLrcs" ng-click="vm.loadMore()">查看更多</md-button>
+                            </div>
+                        </md-content>
+                    </md-tab>
+                    <md-tab label="新作" md-on-select="vm.tabNew()">
+                        <md-content class="md-padding">
+                            <div layout="row" layout-wrap layout-margin>
+                                <md-card ng-repeat="lrc in vm.newLrcList" flex="33" class="lrc-card no-margin" layout-padding>
+                                    <a ui-sref="detail({lrcID: lrc._id})" layout="column" flex>
+                                        <md-card-title>
+                                            <md-card-title-text>
+                                                <span class="md-headline">{{lrc.title}}</span>
+                                                <span class="md-subhead"><img ng-src="{{lrc.author.head}}" alt="avatar">{{lrc.author.name}}</span>
+                                                <time title="{{ lrc.publishTime | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}">{{ lrc.publishTime | amCalendar }}</time>
+                                            </md-card-title-text>
+                                        </md-card-title>
+                                        <md-card-content>
+                                            <pre>{{lrc.content| limitTo: 20}}{{lrc.content.length > 20 ? '...' : ''}}</pre>
+                                        </md-card-content>
+                                        <div flex></div>
+                                        <md-card-footer layout="row" layout-align="space-between center">
+                                            <div>{{lrc.views}}次阅读</div>
+                                            <div><span>{{lrc.likes}}次喜欢</span>
+                                            </div>
+                                            <div>{{lrc.collects}}次收藏</div>
+                                        </md-card-footer>
+                                    </a>
+                                </md-card>
+                            </div>
+                            <div layout="row" layout-align="center">
+                                <md-button class="md-raised md-primary" ng-show="!vm.hideLoadMoreNewLrcs" ng-click="vm.loadMore('new')">查看更多</md-button>
+                            </div>
+                        </md-content>
+                    </md-tab>
+                </md-tabs>
+            </md-content>
+        </div>
+        <span flex></span>
+        <div flex="20" ng-if="$root.globals.user">
+            <md-button class="md-fab" aria-label="create" ui-sref="write">
+                <md-icon> create </md-icon>
+            </md-button>
+            <span>写下自己的歌词</span>
+            <md-list flex>
+                <md-subheader class="md-no-sticky">我的最新歌词 <a ui-sref="user({userID: $root.globals.user._id})">More...</a></md-subheader>
+                <md-list-item class="md-3-line" ng-repeat="item in vm.lrcs" ui-sref="detail({lrcID: item._id})">
+                    <div class="md-list-item-text" layout="column">
+                        <p>{{item.title}}</p>
+                    </div>
+                </md-list-item>
+            </md-list>
+        </div>
+        <span flex></span>
+    </div>
+</md-content>

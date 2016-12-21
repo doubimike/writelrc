@@ -3,8 +3,8 @@
 
 <head>
     <meta charset="utf-8">
-    <title></title>
-    <meta name="description" content="">
+    <title>写歌词</title>
+    <meta name="description" content="写歌词">
     <meta name="viewport" content="width=device-width">
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <!-- build:css(.) styles/vendor.css -->
@@ -28,18 +28,22 @@
             <img class="logo" src="http://obnbtn4jw.bkt.clouddn.com/Logo.png" alt="写歌词">
             <span flex></span>
             <md-nav-bar md-selected-nav-item="currentNavItem" nav-bar-aria-label="navigation links" layout-xs="column" ng-show="!vm.showSearch">
-                <md-nav-item md-nav-sref="main" ng-hide="false">首页</md-nav-item>
-                <md-nav-item md-nav-sref="afterLogin">发现打动你的歌</md-nav-item>
+                <md-nav-item md-nav-sref="main" ng-hide="false">首页
+                    <md-badge>7</md-badge>
+                </md-nav-item>
+                <md-nav-item md-nav-sref="discovery">发现打动你的歌</md-nav-item>
                 <md-nav-item md-nav-sref="login" ng-hide="$root.globals.user">写下我的第一首歌</md-nav-item>
                 <!-- <md-nav-item md-nav-href="#home" name="page3">我要征歌</md-nav-item> -->
                 <md-nav-item md-nav-sref="login" name="login" ng-hide="$root.globals.user">登录</md-nav-item>
                 <md-nav-item md-nav-sref="register" name="register" ng-hide="$root.globals.user">注册</md-nav-item>
-                <md-nav-item md-nav-sref="test" name="register">test</md-nav-item>
+                <!-- <md-nav-item md-nav-sref="test" name="register">test</md-nav-item> -->
             </md-nav-bar>
             <md-nav-bar ng-show="vm.showSearch" class="md-hue-1" flex>
                 <div class="md-toolbar-tools">
                     <md-input-container flex>
-                        <input ng-model="vm.searchContent" placeholder="想探索神马?">
+                        <form ng-submit="vm.search(vm.searchContent)">
+                            <input ng-model="vm.searchContent" placeholder="想探索神马?">
+                        </form>
                     </md-input-container>
                     <md-button ng-click="vm.search(vm.searchContent)">搜索</md-button>
                     <md-button ng-click="vm.cancelSearch()" aria-label="Back">
@@ -101,11 +105,10 @@
     <script src="bower_components/moment/locale/zh-hk.js"></script>
     <script src="scripts/normal-js/util.js"></script>
     <script src="scripts/app.js "></script>
-    <script src="scripts/controllers/main.js "></script>
     <script src="scripts/controllers/about.js "></script>
     <script src="scripts/controllers/register.js "></script>
     <script src="scripts/controllers/login.js "></script>
-    <script src="scripts/controllers/after-login.js "></script>
+    <script src="scripts/controllers/discovery.js "></script>
     <script src="scripts/controllers/write.js "></script>
     <script src="scripts/controllers/detail.js "></script>
     <script src="scripts/controllers/user.js "></script>
@@ -116,6 +119,8 @@
     <script src="scripts/controllers/followers.js "></script>
     <script src="scripts/controllers/followees.js "></script>
     <script src="scripts/controllers/msgBox.js "></script>
+    <script src="scripts/controllers/resetPassByEmail.js"></script>
+    <script src="scripts/controllers/main.js"></script>
     <script src="scripts/controllers/test.js "></script>
     <!-- endbuild -->
 </body>

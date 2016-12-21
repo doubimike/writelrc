@@ -14,6 +14,7 @@ router.post('/write', function (req, res, next) {
         var title = req.body.title;
         var content = req.body.content;
         var bg = req.body.bg;
+        console.log('content', content)
         if (!req.session.user) {
             return next(util.createApiError(40006, '请登录'));
         }
@@ -223,18 +224,31 @@ router.get('/collects', function (req, res, next) {
 });
 
 router.get('/all', function (req, res, next) {
-    console.log(Object.keys(req));
-    // console.log(req.headers);
-    Lrc.find({}).populate({
-        path: 'author',
-        select: 'name head -_id'
-    }).exec(function (err, lrcs) {
-        if (err) {
-            res.next(err);
-        } else {
-            res.json({ lrcList: lrcs });
-        }
-    });
+    var beginIndex = Number(req.query.index) || 0;
+    var sort = req.query.sort || 'popularScore';
+    if (sort === 'popularScore') {
+        Lrc.find({}).skip(beginIndex).limit(12).sort({ 'popularScore': -1 }).populate({
+            path: 'author',
+            select: 'name head -_id'
+        }).exec(function (err, lrcs) {
+            if (err) {
+                next(err);
+            } else {
+                res.json({ lrcList: lrcs });
+            }
+        });
+    } else {
+        Lrc.find({}).skip(beginIndex).limit(12).sort({ 'publishTime': -1 }).populate({
+            path: 'author',
+            select: 'name head -_id'
+        }).exec(function (err, lrcs) {
+            if (err) {
+                next(err);
+            } else {
+                res.json({ lrcList: lrcs });
+            }
+        });
+    }
 });
 
 router.get('/detail/:id', function (req, res, next) {
@@ -391,7 +405,7 @@ router.get('/mine', function (req, res, next) {
     var user = req.session.user;
     console.log('user,user', user)
     if (user) {
-        Lrc.find({ author: user._id }, function (err, lrcs) {
+        Lrc.find({ author: user._id }).sort({ 'publishTime': -1 }).limit(5).exec(function (err, lrcs) {
             if (err) {
                 return next(err);
             }

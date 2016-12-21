@@ -4,6 +4,8 @@ var crypto = require('crypto');
 var User = require('../models/user');
 var Lrc = require('../models/lrc');
 var request = require('request');
+var async = require('async');
+var nodemailer = require('nodemailer');
 
 var util = require('../util');
 router.get('/test', function (req, res, next) {
@@ -105,11 +107,70 @@ router.get('/logout', function (req, res, next) {
 router.post('/forgotPass', function (req, res, next) {
     var email = req.body.email;
     // 接下来应该是发送一封邮件
-    sendEmail(email).then(function () {
-        res.apiSuccess({ 'msg': '发送成功' });
-    }, function (data) {
-        console.log(data);
-    });
+    // sendEmail(email).then(function () {
+    //     res.apiSuccess({ 'msg': '发送成功' });
+    // }, function (data) {
+    //     console.log(data);
+    // });
+    async.waterfall([
+            function (cb) {
+                crypto.randomBytes(20, function (err, buf) {
+                    var token = buf.toString('hex');
+                    cb(err, token);
+                });
+            },
+            function (token, cb) {
+                User.findOne({ email: email }, function (err, user) {
+                    if (!user) {
+                        return next(util.createApiError(40003, '没有这个用户'));
+                    }
+                    console.log('token', token)
+
+                    user.resetPasswordToken = token;
+                    user.resetPasswordExpires = Date.now() + 3600000;
+                    console.log('user.resetPasswordToken', user.resetPasswordToken);
+                    console.log('user.resetPasswordExpires', user.resetPasswordExpires);
+
+                    user.save(function (err, user) {
+                        if (err) {
+                            return next(err);
+                        }
+                        console.log('user', user)
+                        cb(null, token, user);
+                    });
+                });
+            },
+            function (token, user, cb) {
+                var smtpTransport = nodemailer.createTransport({
+                    host: 'smtp.qq.com', // 主机
+                    secure: true, // 使用 SSL
+                    port: 465, // SMTP 端口
+                    auth: {
+                        user: 'doubimike@qq.com', // 账号
+                        pass: 'gytyhaxklgzndeac' // 密码
+                    }
+                });
+                var mailOptions = {
+                    to: user.email,
+                    from: 'doubimike@qq.com',
+                    subject: '重置密码-写歌词',
+                    text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
+                        'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
+                        'http://' + req.headers.host + '/#!/resetPassByEmail/' + token + '\n\n' +
+                        'If you did not request this, please ignore this email and your password will remain unchanged.\n'
+                };
+
+                smtpTransport.sendMail(mailOptions, function (err) {
+                    cb(err, 'done');
+                });
+            }
+        ],
+        function (err) {
+            if (err) {
+                return next(err);
+            }
+            res.apiSuccess({ msg: 'OK' });
+        });
 });
 
 
@@ -237,6 +298,43 @@ router.put('/user/resetpassword', function (req, res, next) {
         })
     })
 })
+
+router.put('/user/resetPasswordByEmail', function (req, res, next) {
+    var newPass = req.body.newPass;
+    var token = req.body.token;
+
+    console.log(newPass)
+    console.log(token)
+
+    User.findOne({ resetPasswordToken: token, resetPasswordExpires: { $gt: Date.now() } }, function (err, user) {
+        if (err) {
+            return next(err);
+        }
+        if (!user) {
+            return next(util.createApiError(40003, '没有这个用户'));
+        }
+
+        var md5 = crypto.createHash('md5');
+        newPass = md5.update(newPass).digest('hex');
+
+        user.password = newPass;
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpires = undefined;
+
+        user.save(function (err, user) {
+            if (err) {
+                next(err);
+
+            }
+            req.session.user = user;
+            res.apiSuccess({
+                msg: 'OK'
+            });
+        })
+    })
+})
+
+
 
 router.get('/user/followers', function (req, res, next) {
     var id = req.query.id;

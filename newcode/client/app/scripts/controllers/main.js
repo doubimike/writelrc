@@ -1,5 +1,5 @@
 'use strict';
 angular.module('clientApp')
-    .controller('msgBoxCtrl', function () {
+    .controller('MainCtrl', function () {
         var vm = this;
     });

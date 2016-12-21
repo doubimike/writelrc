@@ -2,12 +2,12 @@
 <form name="fpForm" novalidate>
     <md-input-container class="md-block" flex-gt-sm>
         <label>邮箱</label>
-        <input name="email" ng-model="user.email" required maxlength="100" ng-pattern="/^.+@.+\..+$/" />
+        <input name="email" ng-model="vm.email" required maxlength="100" ng-pattern="/^.+@.+\..+$/" />
         <div ng-messages="fpForm.email.$error">
             <div ng-message-exp="['required', 'maxlength', 'pattern']">
                 请填写有效的邮箱地址。
             </div>
         </div>
     </md-input-container>
-    <md-button class="md-raised" type="submit">发送</md-button>
+    <md-button class="md-raised" type="submit" ng-click="vm.submit(fpForm.$valid)">发送</md-button>
 </form>

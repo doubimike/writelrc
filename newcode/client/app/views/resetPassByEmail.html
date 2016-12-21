@@ -1,0 +1,26 @@
+<form name="resetPassForm" novalidate>
+    <md-content class="md-padding">
+        <div layout layout-sm="column">
+            <md-input-container flex>
+                <input name="newPass" type="password" ng-model="vm.newPass" placehconfirmer="新密码" required minlength="6"> </input>
+                <div ng-messages="resetPassForm.newPass.$error">
+                    <div ng-message-exp="['required', 'minlength']">
+                        请填写正确的密码。[长度最小为六位]
+                    </div>
+                </div>
+            </md-input-container>
+            <!-- <md-input-container flex>
+                <input type="password" name="confirmPass" ng-model="vm.confirmPass" placehconfirmer="确认密码" required minlength="6"> </input>
+                <div ng-messages="resetPassForm.confirmPass.$error">
+                    <div ng-message-exp="['required', 'minlength']">
+                        请填写正确的密码。[长度最小为六位]
+                    </div>
+                </div>
+            </md-input-container> -->
+        </div>
+    </md-content>
+    <div class="md-actions" layout="row"> <span flex></span>
+        <md-button ng-click="vm.cancel()"> 取消 </md-button>
+        <md-button type="submit" ng-click="vm.submit(resetPassForm.$valid)" class="md-primary"> 提交 </md-button>
+    </div>
+</form>
